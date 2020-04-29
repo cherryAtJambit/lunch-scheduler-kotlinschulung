@@ -10,6 +10,7 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
+import org.jetbrains.exposed.sql.alias
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.insertAndGetId
@@ -78,5 +79,15 @@ class ExposedDSLMore : StringSpec({
         val rows = query.toList()
 
         rows.size shouldBe 10
+    }
+
+    dbTest("joining with alias") {
+        val p1 = PersonTable.alias("p1")
+        val p2 = PersonTable.alias("p2")
+        val query = (p1 crossJoin p2)
+            .slice(p1[PersonTable.id],p2[PersonTable.id],p1[PersonTable.nachname])
+            .select { (p1[PersonTable.nachname] eq p2[PersonTable.nachname]) and (p1[PersonTable.id] neq p2[PersonTable.id]) }
+
+        query.count() shouldBe 0
     }
 })
