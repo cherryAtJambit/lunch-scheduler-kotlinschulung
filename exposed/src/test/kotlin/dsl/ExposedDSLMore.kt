@@ -32,7 +32,7 @@ object AdresseTable : IntIdTable(name = "Adresse") {
     val person = reference("person", PersonTable.id, onDelete = ReferenceOption.CASCADE)
 }
 
-fun StringSpec.dbTest(testName: String, test: TestContext.() -> Unit) = testName {
+fun TestContext.withDB(test: TestContext.() -> Unit) {
     Database.connect(MEM_DB, driver = "org.h2.Driver")
     transaction {
         addLogger(StdOutSqlLogger)
@@ -59,61 +59,73 @@ fun StringSpec.dbTest(testName: String, test: TestContext.() -> Unit) = testName
 }
 
 class ExposedDSLMore : StringSpec({
-    dbTest("query by primary key") {
-        val query = PersonTable.select { PersonTable.id eq 1 }
-        val row = query.singleOrNull()
-        row.shouldNotBeNull()
-        row[PersonTable.nachname] shouldBe "Mustermann1"
-    }
-
-    dbTest("query and slicing") {
-        val query = PersonTable
-            .slice(PersonTable.nachname)
-            .select { (PersonTable.nachname greater "Mustermann2") and (PersonTable.vorname lessEq "Hans4") }
-        val rows = query.toList()
-
-        rows.size shouldBe 2
-        rows[0][PersonTable.nachname] shouldBe "Mustermann3"
-        rows[0].hasValue(PersonTable.vorname) shouldBe false
-    }
-
-    dbTest("joining") {
-        val query = (PersonTable innerJoin AdresseTable)
-            .slice(
-                PersonTable.nachname,
-                AdresseTable.strasse
-            )
-            .select { AdresseTable.plz eq "11112" }
-
-        val rows = query.toList()
-
-        rows.size shouldBe 10
-    }
-
-    dbTest("joining with alias") {
-        val p1 = PersonTable.alias("p1")
-        val p2 = PersonTable.alias("p2")
-        val query = (p1 crossJoin p2)
-            .slice(p1[PersonTable.id], p2[PersonTable.id], p1[PersonTable.nachname])
-            .select { (p1[PersonTable.nachname] eq p2[PersonTable.nachname]) and (p1[PersonTable.id] neq p2[PersonTable.id]) }
-
-        query.count() shouldBe 0
-    }
-
-    dbTest("update") {
-        PersonTable.update({ PersonTable.id eq 1 }) {
-            it[PersonTable.nachname] = "Meier"
+    "query by primary key" {
+        withDB {
+            val query = PersonTable.select { PersonTable.id eq 1 }
+            val row = query.singleOrNull()
+            row.shouldNotBeNull()
+            row[PersonTable.nachname] shouldBe "Mustermann1"
         }
-        val query = PersonTable.select { PersonTable.id eq 1 }
-        val row = query.single()
-        row[PersonTable.nachname] shouldBe "Meier"
     }
 
-    dbTest("delete") {
-        PersonTable.deleteWhere {
-            PersonTable.id eq 1
+    "query and slicing" {
+        withDB {
+            val query = PersonTable
+                .slice(PersonTable.nachname)
+                .select { (PersonTable.nachname greater "Mustermann2") and (PersonTable.vorname lessEq "Hans4") }
+            val rows = query.toList()
+
+            rows.size shouldBe 2
+            rows[0][PersonTable.nachname] shouldBe "Mustermann3"
+            rows[0].hasValue(PersonTable.vorname) shouldBe false
         }
-        val query = PersonTable.select { PersonTable.id eq 1 }
-        query.count() shouldBe 0
+    }
+
+    "joining" {
+        withDB {
+            val query = (PersonTable innerJoin AdresseTable)
+                .slice(
+                    PersonTable.nachname,
+                    AdresseTable.strasse
+                )
+                .select { AdresseTable.plz eq "11112" }
+
+            val rows = query.toList()
+
+            rows.size shouldBe 10
+        }
+    }
+
+    "joining with alias" {
+        withDB {
+            val p1 = PersonTable.alias("p1")
+            val p2 = PersonTable.alias("p2")
+            val query = (p1 crossJoin p2)
+                .slice(p1[PersonTable.id], p2[PersonTable.id], p1[PersonTable.nachname])
+                .select { (p1[PersonTable.nachname] eq p2[PersonTable.nachname]) and (p1[PersonTable.id] neq p2[PersonTable.id]) }
+
+            query.count() shouldBe 0
+        }
+    }
+
+    "update" {
+        withDB {
+            PersonTable.update({ PersonTable.id eq 1 }) {
+                it[PersonTable.nachname] = "Meier"
+            }
+            val query = PersonTable.select { PersonTable.id eq 1 }
+            val row = query.single()
+            row[PersonTable.nachname] shouldBe "Meier"
+        }
+    }
+
+    "delete" {
+        withDB {
+            PersonTable.deleteWhere {
+                PersonTable.id eq 1
+            }
+            val query = PersonTable.select { PersonTable.id eq 1 }
+            query.count() shouldBe 0
+        }
     }
 })

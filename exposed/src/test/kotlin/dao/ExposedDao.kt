@@ -50,7 +50,7 @@ class Adresse(id: EntityID<Int>) : IntEntity(id) {
     var person by Person referencedOn AdresseTable.person
 }
 
-fun StringSpec.dbTest(testName: String, test: TestContext.() -> Unit) = testName {
+fun TestContext.withDB(test: TestContext.() -> Unit) {
     Database.connect(MEM_DB, driver = "org.h2.Driver")
     transaction {
         addLogger(StdOutSqlLogger)
@@ -77,84 +77,100 @@ fun StringSpec.dbTest(testName: String, test: TestContext.() -> Unit) = testName
 }
 
 class ExposedDao : StringSpec({
-    dbTest("query by primary key") {
-        val person = Person.findById(1)
-        person.shouldNotBeNull()
-        person.nachname shouldBe "Mustermann1"
-        person.adressen.count() shouldBe 3
-    }
-
-    dbTest("query") {
-        val personenIterator = Person.find {
-            (PersonTable.nachname greater "Mustermann2") and (PersonTable.vorname lessEq "Hans4")
-        }
-        val personen = personenIterator.toList()
-
-        personen.size shouldBe 2
-        personen[0].nachname shouldBe "Mustermann3"
-    }
-
-    dbTest("navigating") {
-        val adresse = Adresse.findById(1)
-        adresse.shouldNotBeNull()
-        adresse.person.nachname shouldBe "Mustermann1"
-    }
-
-    dbTest("joining") {
-        val query = (PersonTable innerJoin AdresseTable)
-            .slice(PersonTable.columns)
-            .select { AdresseTable.plz eq "11112" }
-
-        val personen = Person.wrapRows(query).toList()
-
-        personen.size shouldBe 10
-    }
-
-    dbTest("eager load") {
-        val personen = Person.all().with(Person::adressen) //works only with cache together. Bug???
-
-        personen.size shouldBe 10
-
-        assertSoftly {
-            personen.forEach { it.adressen.toList().size shouldBe 3 } //no load
+    "query by primary key" {
+        withDB {
+            val person = Person.findById(1)
+            person.shouldNotBeNull()
+            person.nachname shouldBe "Mustermann1"
+            person.adressen.count() shouldBe 3
         }
     }
 
-    dbTest("update") {
-        val person = Person.findById(1)
-        person.shouldNotBeNull()
+    "query" {
+        withDB {
+            val personenIterator = Person.find {
+                (PersonTable.nachname greater "Mustermann2") and (PersonTable.vorname lessEq "Hans4")
+            }
+            val personen = personenIterator.toList()
 
-        person.nachname = "Meier"
-        person.adressen.forEach { it.plz = "22222" }
+            personen.size shouldBe 2
+            personen[0].nachname shouldBe "Mustermann3"
+        }
+    }
 
-        //findById uses the cache only
-        val personAfterUpdate = Person.find { PersonTable.id eq person.id}.single()
-        personAfterUpdate.nachname shouldBe "Meier"
-        assertSoftly {
-            personAfterUpdate.adressen.forEach {
-                it.plz shouldBe "22222"
+    "navigating" {
+        withDB {
+            val adresse = Adresse.findById(1)
+            adresse.shouldNotBeNull()
+            adresse.person.nachname shouldBe "Mustermann1"
+        }
+    }
+
+    "joining" {
+        withDB {
+            val query = (PersonTable innerJoin AdresseTable)
+                .slice(PersonTable.columns)
+                .select { AdresseTable.plz eq "11112" }
+
+            val personen = Person.wrapRows(query).toList()
+
+            personen.size shouldBe 10
+        }
+    }
+
+    "eager load" {
+        withDB {
+            val personen = Person.all().with(Person::adressen) //works only with cache together. Bug???
+
+            personen.size shouldBe 10
+
+            assertSoftly {
+                personen.forEach { it.adressen.toList().size shouldBe 3 } //no load
             }
         }
     }
 
-    dbTest("delete") {
-        val person = Person.findById(1)
-        person.shouldNotBeNull()
+    "update" {
+        withDB {
+            val person = Person.findById(1)
+            person.shouldNotBeNull()
 
-        person.delete()
+            person.nachname = "Meier"
+            person.adressen.forEach { it.plz = "22222" }
 
-        val personAfterUpdate = Person.find { PersonTable.id eq person.id}
-        personAfterUpdate.count() shouldBe 0
+            //findById uses the cache only
+            val personAfterUpdate = Person.find { PersonTable.id eq person.id }.single()
+            personAfterUpdate.nachname shouldBe "Meier"
+            assertSoftly {
+                personAfterUpdate.adressen.forEach {
+                    it.plz shouldBe "22222"
+                }
+            }
+        }
     }
 
-    dbTest("delete adresse") {
-        val person = Person.findById(1)
-        person.shouldNotBeNull()
+    "delete" {
+        withDB {
+            val person = Person.findById(1)
+            person.shouldNotBeNull()
 
-        person.adressen.first().delete()
-        person.adressen.count() shouldBe 2
+            person.delete()
 
-        val personAfterUpdate = Person.find { PersonTable.id eq person.id}.single()
-        personAfterUpdate.adressen.count() shouldBe 2
+            val personAfterUpdate = Person.find { PersonTable.id eq person.id }
+            personAfterUpdate.count() shouldBe 0
+        }
+    }
+
+    "delete adresse" {
+        withDB {
+            val person = Person.findById(1)
+            person.shouldNotBeNull()
+
+            person.adressen.first().delete()
+            person.adressen.count() shouldBe 2
+
+            val personAfterUpdate = Person.find { PersonTable.id eq person.id }.single()
+            personAfterUpdate.adressen.count() shouldBe 2
+        }
     }
 })
