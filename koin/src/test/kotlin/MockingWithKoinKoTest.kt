@@ -4,38 +4,50 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockkClass
-import org.koin.dsl.koinApplication
+import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
 import org.koin.dsl.module
+import org.koin.test.KoinTest
+import org.koin.test.inject
 import org.koin.test.mock.MockProvider
 import org.koin.test.mock.declareMock
 
-class MockingWithKoinKoTest : StringSpec({
-    "mock" {
-        class PersonDao {
-            fun load() = 1
-        }
+class PersonDao {
+    fun load() = 1
+}
 
-        class PersonService(val dao: PersonDao) {
-            fun load() = dao.load()
-        }
+class PersonService(val dao: PersonDao) {
+    fun load() = dao.load()
+}
 
-        val personModule = module {
-            single { PersonDao() }
-            single { PersonService(get()) }
-        }
+class MockingWithKoinKoTest : KoinTest, StringSpec() {
+    val personService: PersonService by inject()
 
-        val application = koinApplication {
-            modules(personModule)
-        }
-
-        application.koin.declareMock<PersonDao> {
-            every { load() } returns 42
-        }
-
-        application.koin.get<PersonService>().load() shouldBe 42
-    }
-}) {
     init {
         MockProvider.register { clazz -> mockkClass(clazz) }
+
+        beforeTest {
+            startKoin {
+                modules(
+                    module {
+                        single { PersonDao() }
+                        single { PersonService(get()) }
+                    }
+                )
+            }
+        }
+
+        afterTest {
+            stopKoin()
+        }
+
+        "mock" {
+
+            declareMock<PersonDao> {
+                every { load() } returns 42
+            }
+
+            personService.load() shouldBe 42
+        }
     }
 }
