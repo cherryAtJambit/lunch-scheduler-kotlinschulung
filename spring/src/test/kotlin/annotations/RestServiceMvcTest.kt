@@ -1,8 +1,6 @@
 package de.e2.spring.annotations
 
 import com.ninjasquad.springmockk.MockkBean
-import de.e2.spring.annotations.Adresse
-import de.e2.spring.annotations.AdresseRepository
 import io.mockk.every
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -28,7 +26,7 @@ class RestServiceMvcTest(@Autowired val mockMvc: MockMvc) {
         )
 
         mockMvc.get("/api/adresse/") {
-            accept(MediaType.APPLICATION_JSON)
+            accept = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isOk }
             content { contentType(MediaType.APPLICATION_JSON) }

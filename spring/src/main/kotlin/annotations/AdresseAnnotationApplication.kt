@@ -4,8 +4,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class AdresseApplication
+class AdresseAnnotationApplication
 
 fun main(args: Array<String>) {
-    runApplication<AdresseApplication>(*args) //#TOPIC Spreading
+    runApplication<AdresseAnnotationApplication>(*args) //#TOPIC Spreading
 }
