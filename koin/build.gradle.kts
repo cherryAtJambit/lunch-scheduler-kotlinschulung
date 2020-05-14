@@ -6,6 +6,7 @@ val log4jVersion: String by rootProject
 val koinVersion: String by rootProject
 val mockkVersion: String by rootProject
 val junitVersion: String by rootProject
+val ktorVersion: String by rootProject
 
 plugins {
     kotlin("jvm")
@@ -35,6 +36,9 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.koin:koin-core-ext:$koinVersion")
     implementation("org.koin:koin-core:$koinVersion")
+    implementation("org.koin:koin-ktor:$koinVersion")
+    implementation("io.ktor:ktor-server-core:$ktorVersion")
+    implementation("io.ktor:ktor-server-netty:$ktorVersion")
 
     testImplementation("org.koin:koin-test:$koinVersion")
     

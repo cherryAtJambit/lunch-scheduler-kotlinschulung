@@ -7,6 +7,7 @@ import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldNotBe
 import org.koin.core.KoinComponent
 import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
 import org.koin.core.inject
 import org.koin.core.qualifier.named
 import org.koin.core.qualifier.qualifier
@@ -136,5 +137,10 @@ class DependencyInjection : StringSpec({
 
         val personController = PersonController()
         personController.personService.shouldNotBeNull()
+    }
+
+    afterTest {
+        //Damit es nicht im Test vergessen wird
+        stopKoin()
     }
 })
