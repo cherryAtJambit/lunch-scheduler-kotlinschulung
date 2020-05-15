@@ -17,4 +17,5 @@ pluginManagement {
 include(":exposed")
 include(":koin")
 include(":spring")
+include(":coroutines-ktor")
 

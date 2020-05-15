@@ -11,6 +11,7 @@ val springMockkVersion: String by extra { "2.0.1" }
 val exposedVersion: String by extra { "0.23.1" }
 val h2Version: String by extra { "1.4.200" }
 val koinVersion: String by extra {"2.1.5"}
+val jsonPathVersion: String by extra {"2.4.0"}
 
 allprojects {
     repositories {
