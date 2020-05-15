@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 
 @OptIn(
-    FlowPreview::class, KtorExperimentalAPI::class, ExperimentalCoroutinesApi::class
+    FlowPreview::class, ExperimentalCoroutinesApi::class
 )
 fun Application.broadcastWebsocket() {
     val logger = LoggerFactory.getLogger("server")

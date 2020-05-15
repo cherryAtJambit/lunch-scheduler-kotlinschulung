@@ -18,4 +18,5 @@ include(":exposed")
 include(":koin")
 include(":spring")
 include(":coroutines-ktor")
+include(":misc")
 

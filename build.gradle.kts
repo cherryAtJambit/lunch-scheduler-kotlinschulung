@@ -26,7 +26,7 @@ allprojects {
 
     tasks.withType<KotlinCompile>().configureEach {
         kotlinOptions.jvmTarget = "1.8"
-        kotlinOptions.freeCompilerArgs = listOf("-Xjsr305=strict", "-Xopt-in=kotlin.Experimental")
+        kotlinOptions.freeCompilerArgs = listOf("-Xjsr305=strict", "-Xopt-in=kotlin.Experimental","-XXLanguage:+InlineClasses")
     }
 
     tasks.withType<Test>().configureEach() {
