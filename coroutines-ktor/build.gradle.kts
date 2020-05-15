@@ -8,6 +8,7 @@ val mockkVersion: String by rootProject
 val junitVersion: String by rootProject
 val ktorVersion: String by rootProject
 val jsonPathVersion: String by rootProject
+val jerseyClientVersion: String by rootProject
 
 plugins {
     kotlin("jvm")
@@ -43,7 +44,9 @@ dependencies {
     implementation("io.ktor:ktor-html-builder:$ktorVersion")
     implementation("io.ktor:ktor-locations:$ktorVersion")
     implementation("com.jayway.jsonpath:json-path:$jsonPathVersion")
-    
+    implementation("org.glassfish.jersey.core:jersey-client:$jerseyClientVersion")
+    implementation("org.glassfish.jersey.inject:jersey-hk2:$jerseyClientVersion")
+
     testImplementation("io.kotest:kotest-runner-junit5-jvm:$kotestVersion")
     testImplementation("io.kotest:kotest-assertions-core-jvm:$kotestVersion")
     testImplementation("io.kotest:kotest-property-jvm:$kotestVersion")
