@@ -13,6 +13,9 @@ val h2Version: String by extra { "1.4.200" }
 val koinVersion: String by extra {"2.1.5"}
 val jsonPathVersion: String by extra {"2.4.0"}
 val jerseyClientVersion: String by extra {"2.30.1"}
+val r2dbcVersion: String by extra {"0.8.1.RELEASE"}
+val r2dbcPoolVersion: String by extra {"0.8.2.RELEASE"}
+val r2dbcH2Version: String by extra {"0.8.3.RELEASE"}
 
 allprojects {
     repositories {

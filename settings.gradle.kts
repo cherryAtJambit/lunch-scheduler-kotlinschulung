@@ -18,5 +18,6 @@ include(":exposed")
 include(":koin")
 include(":spring")
 include(":coroutines-ktor")
+include(":r2dbc")
 include(":misc")
 
