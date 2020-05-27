@@ -9,7 +9,7 @@ pluginManagement {
         id("org.jetbrains.gradle.plugin.idea-ext") version "0.7"
         kotlin("plugin.spring") version kotlinVersion
         kotlin("plugin.jpa") version kotlinVersion
-        id("org.springframework.boot") version "2.2.5.RELEASE"
+        id("org.springframework.boot") version "2.3.0.RELEASE"
         id("io.spring.dependency-management") version "1.0.9.RELEASE"
     }
 }
@@ -17,6 +17,7 @@ pluginManagement {
 include(":exposed")
 include(":koin")
 include(":spring")
+include(":spring-reactive")
 include(":coroutines-ktor")
 include(":r2dbc")
 include(":misc")
