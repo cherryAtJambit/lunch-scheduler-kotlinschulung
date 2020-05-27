@@ -1,0 +1,29 @@
+@startuml
+
+class RestaurantsController <</api/restaurants>> {
+    <<Get>> <</>> Restaurant[] get(String location)
+}
+
+class InvitationController <</api/invitation>> {
+    <<Post>> <</>> void post(Invitation invitation)
+}
+
+class LunchController <</api/lunch>> {
+    <<Post>> <</>> void post(Lunch lunch)
+    <<Delete>> <</>> void delete(Lunch lunch)
+}
+
+class MeController <</api/me>> {
+    <<Get>> <</>> User get()
+    <<Get>> <</lunches>> Lunch[] lunches()
+    <<Get>> <</invitations>> Invitation invitations()
+    <<Get>> <</friends>> User[] friends()
+}
+
+class FriendsController <</api/friends>>{
+    <<Get>> <</suggest>> User[] get()
+    <<Post>> <</>> void add(Friendship friendship)
+    <<Delete>> <</>> void delete(Friendship friendship)
+}
+
+@enduml

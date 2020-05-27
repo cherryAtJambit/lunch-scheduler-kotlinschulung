@@ -1,0 +1,61 @@
+@startuml
+
+class Restaurant {
+    ID id
+    String name
+    double rating
+    String address
+    String price
+}
+
+class User {
+    ID id
+    String name
+}
+
+User --> "*" Friendship: friends
+User --> "*" Lunch: lunches
+
+class Friendship {
+    ID id
+    ID userId
+    ID friendId
+}
+
+Friendship --> User: friend
+
+class Invitation {
+    ID id
+    ID userId
+    ID lunchId
+    InviteResponseKind response
+}
+
+Invitation --> User
+Invitation --> Lunch
+
+class Lunch {
+    ID id
+    String notes
+    DateTime date
+    ID hostId
+    Invitation[] invitations
+    ID locationId
+    LunchState state
+}
+
+Lunch --> User: (userId)
+Lunch --> Restaurant: (locationId)
+Lunch *--> "*" Invitation: invitations
+
+enum LunchState {
+    SCHEDULED
+    CANCELLED
+}
+
+enum InviteResponseKind {
+    NONE
+    ACCEPTED
+    DECLINED
+}
+@enduml

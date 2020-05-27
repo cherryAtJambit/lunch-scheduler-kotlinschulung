@@ -1,0 +1,258 @@
+openapi: 3.0.0
+info:
+  title: Api
+  version: '1.0'
+servers:
+  - url: 'http://localhost:3000'
+paths:
+  /api/restaurants:
+    get:
+      summary: ''
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Restaurant'
+      operationId: get-api-restaurants
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: location
+    parameters: []
+  /api/friends:
+    post:
+      summary: ''
+      operationId: post-api-friends
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Friendship'
+      description: New friendship
+    delete:
+      summary: ''
+      operationId: delete-api-friends
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Friendship'
+  /api/friends/suggest:
+    get:
+      summary: ''
+      tags: []
+      responses: {}
+      operationId: get-api-friends-suggest
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/User'
+  /api/invitation:
+    post:
+      summary: ''
+      operationId: post-api-invitation
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Invitation'
+  /api/lunch:
+    post:
+      summary: ''
+      operationId: post-api-lunch
+      responses:
+        '200':
+          description: OK
+    delete:
+      summary: ''
+      operationId: delete-api-lunch
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Lunch'
+  /api/me/lunches:
+    get:
+      summary: ''
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Lunch'
+      operationId: get-api-me-lunches
+    parameters: []
+  /api/me/friends:
+    get:
+      summary: ''
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+      operationId: get-api-me-friends
+    parameters: []
+  /api/me/invitations:
+    get:
+      summary: ''
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Invitation'
+      operationId: get-api-me-invitation
+    parameters: []
+  /api/me:
+    get:
+      summary: ''
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+      operationId: get-api-me
+components:
+  schemas:
+    Restaurant:
+      title: Restaurant
+      type: object
+      x-examples: {}
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        rating:
+          type: number
+        address:
+          type: string
+        price:
+          type: string
+          description: Dollar signs
+      required:
+        - id
+        - name
+        - rating
+        - address
+        - price
+    Friendship:
+      title: Friendship
+      type: object
+      properties:
+        id:
+          type: string
+          description: not in post
+        userId:
+          type: string
+        friendId:
+          type: string
+      required:
+        - userId
+        - friendId
+    User:
+      title: User
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+      required:
+        - id
+        - name
+    Invitation:
+      title: Invitation
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        lunchId:
+          type: string
+        response:
+          type: string
+          enum:
+            - none
+            - accepted
+            - declined
+      required:
+        - id
+        - userId
+        - lunchId
+        - response
+    Lunch:
+      title: Lunch
+      type: object
+      properties:
+        id:
+          type: string
+        notes:
+          type: string
+        date:
+          type: string
+          format: date-time
+        hostId:
+          type: string
+        locationId:
+          type: string
+        state:
+          type: string
+          enum:
+            - scheduled
+            - cancelled
+        invitations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Invitation'
+      required:
+        - id
+        - date
+        - hostId
+        - locationId
+        - state
+        - invitations
+  securitySchemes:
+    Basic:
+      type: http
+      scheme: basic
+security:
+  - Basic: []
