@@ -21,4 +21,5 @@ include(":spring-reactive")
 include(":coroutines-ktor")
 include(":r2dbc")
 include(":misc")
+include(":ktor")
 

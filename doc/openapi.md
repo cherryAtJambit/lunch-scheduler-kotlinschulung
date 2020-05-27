@@ -1,0 +1,1 @@
+https://stoplight.io/studio/
