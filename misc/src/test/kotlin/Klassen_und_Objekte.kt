@@ -20,33 +20,6 @@ import io.kotest.assertions.throwables.shouldThrow as shouldThrow1
  */
 class Klasssen_und_Objekte : StringSpec({
 
-
-    /**
-     * ### Deklaration und Konstrukturaufruf
-     *
-     *
-     *  * Deklarationsblock `{...}` ist optional.
-     *
-     *  * Geschachtelte Deklaration, z. B. innerhalb von Funktionen, ist
-     *    auch mit benannten Klassen erlaubt.
-     *
-     *  * Kein `new` beim Konstruktoraufruf
-     *    - Konstruktoren erkennt man daran, dass sie mit einem Großbuchstaben beginnen.
-     *
-     */
-    "Die kleinste aller Klassen" {
-
-
-        class FastNix
-
-
-        val n = FastNix()
-
-        n.toString() shouldContain "FastNix"
-        (n is FastNix) shouldBe true
-    }
-
-
     /**
      * ## Properties und Funktionen
      *
@@ -88,79 +61,6 @@ class Klasssen_und_Objekte : StringSpec({
         flaeche shouldBe 12
     }
 
-
-    /**
-     * ## Primärer Konstruktur
-     *
-     * * Jede Klasse hat genau einen(!( *primären Konstruktor*
-     *
-     * * Dieser wird bei jeder Instanzerzeugung aufgerufen
-     *
-     * * Seine Parameter können im Deklarationsblock zur Initialisierung von
-     *   Feldern genutzt werden.
-     */
-    "Ein primärer Konstruktor" {
-
-
-        class Rechteck constructor(b: Int, h: Int) {
-
-            val breite = b
-            val hoehe = h
-
-        }
-
-
-        val r = Rechteck(3, 4)
-
-        r.breite shouldBe 3
-        r.hoehe shouldBe 4
-
-    }
-
-
-    /**
-     * * Man darf das Schlüsselwort `constructor` beim primären constructor auch weglassen.
-     *
-     * * Machmal ist es erforderlich z. B. wenn man einen `private constructor`
-     *   erstellen möchte.
-     *
-     * * Hat man nur einen Konstruktur, dann entspricht die Deklaration
-     *   (hier `Rechteck(b: Int, h: Int)`) sehr schön der Instanzerzeugung,
-     *   (hier `Rechtec(3,4)` ).
-     */
-    "Man das Keyword constructor auch weglassen" {
-
-
-        class Rechteck(b: Int, h: Int) {
-            val breite = b
-            val hoehe = h
-        }
-
-
-        val r = Rechteck(3, 4)
-
-        r.breite shouldBe 3
-        r.hoehe shouldBe 4
-    }
-
-    /**
-     * ## Felddeklarationen im primären Konstruktor
-     *
-     * Viele Konstruktoren tun nichts weiter, als ein paar Felder zu initialiseren.
-     * Dafür gibt es eine Kurznotation.
-     * Wenn man den Parametern des primären Konstruktors `val` oder
-     * `var` vorangestellt, wird ein ex
-     */
-    "Mit var oder val können Felder auch im primären Konstruktur deklariert werden" {
-
-
-        class Rechteck(val breite: Int, val hoehe: Int)
-
-        val r = Rechteck(3, 4)
-
-        r.breite shouldBe 3
-        r.hoehe shouldBe 4
-    }
 
     /**
      * ## Sekundäre Konstruktoren
@@ -272,6 +172,25 @@ class Klasssen_und_Objekte : StringSpec({
     }
 
     /**
+     * Innere Klassen die implizit auf das äussere Objekt zugreifen sollen
+     * müssen mit Inner definiert werden
+     */
+    "Innere Klasse" {
+        class Outer(val a: Int) {
+            inner class Inner(val b: Int) {
+                fun accessOuter(): Int {
+                    return a + b
+                }
+            }
+
+            val inner = Inner(2)
+        }
+
+        val o = Outer(1)
+        o.inner.accessOuter() shouldBe 3
+    }
+
+    /**
      * ## Vererbung
      *
      * - Nur erlaubt, wenn Oberklasse als `open` deklariert ist.
@@ -288,7 +207,7 @@ class Klasssen_und_Objekte : StringSpec({
 
         open class Ansprache(val anrede: String, vorname: String, name: String) : Name(vorname, name) {
             override fun overridable1() {
-                super.overridable1()
+
             }
 
             //Nicht mehr overridable

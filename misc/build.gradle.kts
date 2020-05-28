@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val kotestVersion: String by rootProject
 val log4jVersion: String by rootProject
 val mockkVersion: String by rootProject
+val ktorVersion: String by rootProject
 
 plugins {
     kotlin("jvm")
@@ -32,6 +33,11 @@ idea {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("io.ktor:ktor-server-core:$ktorVersion")
+    implementation("io.ktor:ktor-server-netty:$ktorVersion")
+    implementation("io.ktor:ktor-html-builder:$ktorVersion")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.0")
+
     testImplementation("io.kotest:kotest-runner-junit5-jvm:$kotestVersion")
     testImplementation("io.kotest:kotest-assertions-core-jvm:$kotestVersion")
     testImplementation("io.kotest:kotest-property-jvm:$kotestVersion")

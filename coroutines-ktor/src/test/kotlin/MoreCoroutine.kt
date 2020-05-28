@@ -5,6 +5,7 @@ import de.e2.coroutines.collage.requestImageData
 import de.e2.coroutines.collage.requestImageUrls
 import io.kotest.core.spec.style.StringSpec
 import io.ktor.client.HttpClient
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -12,13 +13,20 @@ import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.flow.flattenMerge
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onErrorReturn
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.selects.selectUnbiased
@@ -34,6 +42,7 @@ import javax.imageio.ImageIO
 import javax.ws.rs.client.ClientBuilder
 import javax.ws.rs.client.InvocationCallback
 import javax.ws.rs.core.MediaType
+import kotlin.concurrent.thread
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -42,74 +51,8 @@ import kotlin.coroutines.suspendCoroutine
 @ExperimentalCoroutinesApi
 class MoreCoroutine : StringSpec({
 
-    "suspendCoroutine suspendiert die aktuelle Koroutine" {
-        val jerseyClient = ClientBuilder.newClient(ClientConfig())
-        suspend fun requestImageData(imageUrl: String) = suspendCoroutine<BufferedImage> { cont ->
-            jerseyClient.target(imageUrl)
-                .request(MediaType.APPLICATION_OCTET_STREAM)
-                .async()
-                .get(object : InvocationCallback<InputStream> {
-                    override fun completed(response: InputStream) {
-                        val image = ImageIO.read(response)
-                        cont.resume(image)
-                    }
-
-                    override fun failed(throwable: Throwable) {
-                        cont.resumeWithException(throwable)
-                    }
-                })
-        }
-
-        val image = requestImageData("https://etosquare.de/img/rene2018.jpg")
-        println("${image.width}x${image.height}")
-    }
 
     val ktorClient = HttpClient()
-
-    "Channels"  {
-
-        suspend fun retrieveImages(query: String, channel: SendChannel<BufferedImage>) {
-            while (isActive) {
-                try {
-                    val url = ktorClient.requestImageUrls(query,1).random()
-                    val image = ktorClient.requestImageData(url)
-                    channel.send(image)
-                    delay(Duration.ofSeconds(2))
-                } catch (exc: Exception) {
-                    delay(Duration.ofSeconds(2))
-                }
-            }
-        }
-
-        suspend fun createCollage(channel: ReceiveChannel<BufferedImage>, count: Int) {
-            var imageId = 0
-            while (isActive) {
-                val images = (1..count).map {
-                    channel.receive()
-                }
-                val collage = combineImages(images)
-                ImageIO.write(collage, "png", FileOutputStream("image-${imageId++}.png"))
-            }
-        }
-
-        val channel = Channel<BufferedImage>()
-        val dogsJob = launch(Dispatchers.Unconfined) {
-            retrieveImages("dogs", channel)
-        }
-
-        val catsJob = launch(Dispatchers.Unconfined) {
-            retrieveImages("cats", channel)
-        }
-
-        val collageJob = launch(Dispatchers.Unconfined) {
-            createCollage(channel, 4)
-        }
-        delay(Duration.ofMinutes(1))
-
-        dogsJob.cancel()
-        catsJob.cancel()
-        collageJob.cancel()
-    }
 
 
     "Producer und Consumer"  {
@@ -154,39 +97,6 @@ class MoreCoroutine : StringSpec({
         collageJob.cancel()
     }
 
-    "Broadcast Channels"  {
-        val channel = Channel<String>()
-
-        repeat(5) { index ->
-            launch {
-                for (msg in channel) {
-                    println("Channel empfangen $index: $msg")
-                }
-            }
-        }
-
-        channel.send("A")
-        channel.send("B")
-        channel.send("C")
-        channel.cancel()
-
-        val broadcastChannel = BroadcastChannel<String>(1)
-
-        repeat(5) { index ->
-            launch {
-                for (msg in broadcastChannel.openSubscription()) {
-                    println("BroadcastChannel empfangen $index: $msg")
-                }
-            }
-        }
-
-        delay(Duration.ofSeconds(1))
-        broadcastChannel.send("A")
-        broadcastChannel.send("B")
-        broadcastChannel.send("C")
-        broadcastChannel.cancel()
-    }
-
     "Producer und Consumer mit Flows"  {
         fun retrieveImages(query: String): Flow<BufferedImage> = flow {
             while(true) {
@@ -197,7 +107,13 @@ class MoreCoroutine : StringSpec({
                     emit(image)
                     delay(Duration.ofSeconds(1))
                 } catch (exc: Exception) {
-                    delay(Duration.ofSeconds(1))
+                    when(exc) {
+                        is CancellationException -> {
+                            println("Cancelled $query")
+                            throw exc
+                        }
+                        else ->  delay(Duration.ofSeconds(1))
+                    }
                 }
             }
         }
@@ -216,16 +132,67 @@ class MoreCoroutine : StringSpec({
             }
         }
 
-        val dogsFlow = retrieveImages("dogs")
-        val catsFlow = retrieveImages("cats")
+        val dogsFlow = retrieveImages("dogs").onStart { println("Started dogs") }
+        val catsFlow = retrieveImages("cats").onStart { println("Started cats") }
 
         val collageJob = launch(Dispatchers.Unconfined) {
-            createCollage(4, catsFlow, dogsFlow).collectIndexed { imageId, collage ->
+            val collageFlow = createCollage(4, catsFlow, dogsFlow)
+                .onStart { println("Started collage") }
+                .onCompletion { println("Completed collage") }
+            collageFlow.collectIndexed { imageId, collage ->
                 println("new png")
                 ImageIO.write(collage, "png", FileOutputStream("image-${imageId}.png"))
             }
         }
-        delay(Duration.ofMinutes(2))
+        delay(Duration.ofSeconds(10))
+        println("Cancel Job")
         collageJob.cancel()
     }
+
+    "Callback Flows"  {
+        fun flowFromCallback() = callbackFlow<String> {
+            val thread = thread {
+                println("Start Thread")
+                var i = 0
+                try{
+                    while (!Thread.interrupted()) {
+                        offer("Event ${i++}")
+                        Thread.sleep(100)
+                    }
+                } finally {
+                    println("Stop Thread")
+                }
+            }
+
+            awaitClose {
+                thread.interrupt()
+            }
+        }
+
+        val flow = flowFromCallback()
+        flow.take(5).collect {
+            println(it)
+        }
+    }
+
+    "Broadcast Channel mit Flow"  {
+        val broadcastChannel = BroadcastChannel<String>(1)
+        val broadcastFlow = broadcastChannel.asFlow()
+
+        repeat(5) { index ->
+            launch {
+                broadcastFlow.collect {msg ->
+                    println("BroadcastChannel empfangen $index: $msg")
+                }
+            }
+        }
+
+        delay(Duration.ofSeconds(1))
+        broadcastChannel.send("A")
+        broadcastChannel.send("B")
+        broadcastChannel.send("C")
+        broadcastChannel.cancel()
+    }
+
+
 })

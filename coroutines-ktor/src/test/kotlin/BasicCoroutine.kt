@@ -1,8 +1,12 @@
 package de.e2.coroutines
 
+import de.e2.coroutines.collage.combineImages
+import de.e2.coroutines.collage.requestImageData
+import de.e2.coroutines.collage.requestImageUrls
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
+import io.ktor.client.HttpClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -11,14 +15,30 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.time.delay
 import kotlinx.coroutines.withContext
+import org.glassfish.jersey.client.ClientConfig
+import java.awt.image.BufferedImage
+import java.io.FileOutputStream
+import java.io.InputStream
 import java.time.Duration
 import java.util.concurrent.Executors
+import javax.imageio.ImageIO
+import javax.ws.rs.client.ClientBuilder
+import javax.ws.rs.client.InvocationCallback
+import javax.ws.rs.core.MediaType
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 class BasicCoroutine : StringSpec({
     "runBlocking" {
@@ -72,7 +92,7 @@ class BasicCoroutine : StringSpec({
 
     /**
      * Beim Starten einer Koroutine kann ein CoroutinenContext angegeben werden.
-     * Dieser ist besteht aus einer Menge von Eigenschaften, z.B. den Dispatcher der festlegt,
+     * Dieser besteht aus einer Menge von Eigenschaften, z.B. den Dispatcher der festlegt,
      * mit welchem Thread die Koroutine läuft
      */
     "CoroutineContext konfigurieren"  {
@@ -215,23 +235,23 @@ class BasicCoroutine : StringSpec({
                 cancel()
             }
 
-            fun launchForObject(msg: String) = launch {
+            fun launch(msg: String) = launch {
                 delay(Duration.ofSeconds(1))
                 println("Hallo vom Objekt $id mit Nachricht $msg")
             }
         }
 
-        val object1 = ObjectWithLifecycle(1)
-        val object2 = ObjectWithLifecycle(2)
+        val scope1 = ObjectWithLifecycle(1)
+        val scope2 = ObjectWithLifecycle(2)
 
         for (i in 1..10) {
-            object1.launchForObject("AAA")
-            object2.launchForObject("BBB")
+            scope1.launch("AAA")
+            scope2.launch("BBB")
         }
 
         delay(Duration.ofMillis(500))
-        object1.close()
-        object1.launchForObject("Wird nicht mehr gestartet")
+        scope1.close()
+        scope1.launch("Wird nicht mehr gestartet")
 
         delay(Duration.ofSeconds(2))
     }
@@ -247,7 +267,7 @@ class BasicCoroutine : StringSpec({
                 cancel()
             }
 
-            fun launchForObject(msg: String) = launch {
+            fun launch(msg: String) = launch {
                 try {
                     delay(Duration.ofSeconds(1))
                     println("Hallo vom Objekt $id mit Nachricht $msg")
@@ -262,17 +282,125 @@ class BasicCoroutine : StringSpec({
             }
         }
 
-        val object1 = ObjectWithLifecycle(1, false)
-        val object2 = ObjectWithLifecycle(2, true)
+        val scope = ObjectWithLifecycle(1, false)
+        val supervisorScope = ObjectWithLifecycle(2, true)
 
         for (i in 1..10) {
-            object1.launchForObject("AAA")
-            object2.launchForObject("BBB")
+            scope.launch("AAA")
+            supervisorScope.launch("BBB")
         }
 
-        object1.launchWithException()
-        object2.launchWithException()
+        scope.launchWithException()
+        supervisorScope.launchWithException()
 
         delay(Duration.ofSeconds(2))
+    }
+
+    val ktorClient = HttpClient()
+
+    "Channels"  {
+
+        suspend fun retrieveImages(query: String, channel: SendChannel<BufferedImage>) {
+            while (isActive) {
+                try {
+                    val url = ktorClient.requestImageUrls(query,1).random()
+                    val image = ktorClient.requestImageData(url)
+                    channel.send(image)
+                    delay(Duration.ofSeconds(2))
+                } catch (exc: Exception) {
+                    delay(Duration.ofSeconds(2))
+                }
+            }
+        }
+
+        suspend fun createCollage(channel: ReceiveChannel<BufferedImage>, count: Int) {
+            var imageId = 0
+            while (isActive) {
+                val images = (1..count).map {
+                    channel.receive()
+                }
+                val collage = combineImages(images)
+                ImageIO.write(collage, "png", FileOutputStream("image-${imageId++}.png"))
+            }
+        }
+
+        val channel = Channel<BufferedImage>()
+        val dogsJob = launch(Dispatchers.Unconfined) {
+            retrieveImages("dogs", channel)
+        }
+
+        val catsJob = launch(Dispatchers.Unconfined) {
+            retrieveImages("cats", channel)
+        }
+
+        val collageJob = launch(Dispatchers.Unconfined) {
+            createCollage(channel, 4)
+        }
+        delay(Duration.ofMinutes(1))
+
+        dogsJob.cancel()
+        catsJob.cancel()
+        collageJob.cancel()
+    }
+
+    "Broadcast Channels"  {
+        //Normaler Channel (Queue)
+        val channel = Channel<String>()
+
+        repeat(5) { index ->
+            launch {
+                for (msg in channel) {
+                    println("Channel empfangen $index: $msg")
+                }
+            }
+        }
+
+        channel.send("A")
+        channel.send("B")
+        channel.send("C")
+        channel.cancel()
+
+        //Broadcast Channel (Topic)
+        val broadcastChannel = BroadcastChannel<String>(1)
+
+        repeat(5) { index ->
+            launch {
+                val receiveChannel = broadcastChannel.openSubscription()
+                for (msg in receiveChannel) {
+                    println("BroadcastChannel empfangen $index: $msg")
+                }
+
+                //Unsubscribe
+                receiveChannel.cancel()
+            }
+        }
+
+        delay(Duration.ofSeconds(1))
+        broadcastChannel.send("A")
+        broadcastChannel.send("B")
+        broadcastChannel.send("C")
+        broadcastChannel.cancel()
+    }
+
+    "suspendCoroutine suspendiert die aktuelle Koroutine" {
+        val jerseyClient = ClientBuilder.newClient(ClientConfig())
+        suspend fun requestImageData(imageUrl: String) = suspendCoroutine<BufferedImage> { cont ->
+            jerseyClient.target(imageUrl)
+                .request(MediaType.APPLICATION_OCTET_STREAM)
+                .async()
+                .get(object : InvocationCallback<InputStream> {
+                    override fun completed(response: InputStream) {
+                        val image = ImageIO.read(response)
+                        cont.resume(image)
+                    }
+
+                    override fun failed(throwable: Throwable) {
+                        cont.resumeWithException(throwable)
+                    }
+                })
+        }
+
+        val image = requestImageData("https://etosquare.de/img/rene2018.jpg")
+        println("${image.width}x${image.height}")
     }
 })

@@ -1,10 +1,9 @@
 package de.e2.misc
 
 import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Test
+import java.time.LocalDate
+import java.time.Month
 
 class Infix_Operatoren : StringSpec({
     "Infix Funktionen erhöhen die Lesbarkeit" {
@@ -12,7 +11,7 @@ class Infix_Operatoren : StringSpec({
 
         val daysMitInfix = mapOf("Mo" to "Monday", "Tu" to "Tuesday")
 
-        daysOhneInfix shouldBe  daysMitInfix
+        daysOhneInfix shouldBe daysMitInfix
     }
 
     "Eigene Infix Funktionen eigenen sich besonders im algebraischen Umfeld" {
@@ -79,5 +78,18 @@ class Infix_Operatoren : StringSpec({
 
         (c1 == c2) shouldBe false
         (c1 > c2) shouldBe true
+    }
+
+    "Destructuring operator" {
+        val date = LocalDate.of(2020, Month.JULY, 1)
+
+        operator fun LocalDate.component1() = year
+        operator fun LocalDate.component2() = month
+        operator fun LocalDate.component3() = dayOfMonth
+
+        val (y, _, d) = date
+
+        y shouldBe 2020
+        d shouldBe 1
     }
 })

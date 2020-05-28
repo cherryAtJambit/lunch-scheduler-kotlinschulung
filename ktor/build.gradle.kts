@@ -6,6 +6,7 @@ val log4jVersion: String by rootProject
 val mockkVersion: String by rootProject
 val junitVersion: String by rootProject
 val ktorVersion: String by rootProject
+val jerseyClientVersion: String by rootProject
 
 plugins {
     kotlin("jvm")
@@ -46,6 +47,12 @@ dependencies {
     implementation("io.ktor:ktor-jackson:$ktorVersion")
 
     implementation("io.ktor:ktor-websockets:$ktorVersion")
+
+    implementation("org.glassfish.jersey.core:jersey-client:$jerseyClientVersion")
+    implementation("org.glassfish.jersey.inject:jersey-hk2:$jerseyClientVersion")
+    implementation("org.glassfish.jersey.media:jersey-media-sse:$jerseyClientVersion")
+    implementation("io.github.microutils:kotlin-logging:1.7.9")
+
 
     testImplementation("io.kotest:kotest-runner-junit5-jvm:$kotestVersion")
     testImplementation("io.kotest:kotest-assertions-core-jvm:$kotestVersion")
