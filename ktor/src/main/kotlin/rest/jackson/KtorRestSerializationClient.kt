@@ -1,7 +1,5 @@
 package de.e2.ktor.rest.jackson
 
-import de.e2.ktor.rest.jackson.MyRequest
-import de.e2.ktor.rest.jackson.MyResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.features.DefaultRequest
 import io.ktor.client.features.json.JacksonSerializer

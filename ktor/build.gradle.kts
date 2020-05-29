@@ -45,6 +45,8 @@ dependencies {
     implementation("io.ktor:ktor-auth:$ktorVersion")
     implementation("io.ktor:ktor-serialization:$ktorVersion")
     implementation("io.ktor:ktor-jackson:$ktorVersion")
+    implementation("io.ktor:ktor-locations:$ktorVersion")
+    implementation("io.ktor:ktor-html-builder:$ktorVersion")
 
     implementation("io.ktor:ktor-websockets:$ktorVersion")
 

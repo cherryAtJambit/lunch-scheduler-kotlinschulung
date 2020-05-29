@@ -28,8 +28,11 @@ Tag 2
 * Weiteres mit Ktor
     * Sessions
     * Locations
+    * Übung Optional: Mit Locations Übersichtsseite und Detailseite für Restaurants bauen
         
-* Abschluss: Generics, Unit-Nothing    
+* Abschluss: 
+    * Generics
+    * Unit-Nothing    
        
 Tag 3    
 
