@@ -22,4 +22,5 @@ include(":coroutines")
 include(":r2dbc")
 include(":misc")
 include(":ktor")
+include(":lunch-scheduler")
 

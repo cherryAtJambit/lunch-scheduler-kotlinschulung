@@ -23,7 +23,6 @@ class MeController <</api/me>> {
 class FriendsController <</api/friends>>{
     <<Get>> <</suggest>> User[] get() //returns all users not friends so far
     <<Post>> <</>> void add(Friendship friendship)
-    <<Delete>> <</>> void delete(Friendship friendship)
 }
 
 @enduml

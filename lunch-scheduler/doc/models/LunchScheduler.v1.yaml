@@ -38,17 +38,6 @@ paths:
             schema:
               $ref: '#/components/schemas/Friendship'
       description: New friendship
-    delete:
-      summary: ''
-      operationId: delete-api-friends
-      responses:
-        '200':
-          description: OK
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Friendship'
   /api/friends/suggest:
     get:
       summary: ''
