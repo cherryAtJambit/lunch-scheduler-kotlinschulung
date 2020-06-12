@@ -3,11 +3,12 @@ package de.e2.misc
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import java.time.LocalDate as BetterDate
+import java.util.*
+import java.sql.Date as SqlDate
+import kotlin.text.toLowerCase as inKleinbuchstaben
 
 
 typealias Alter = Int
-
 
 inline class Name(val value: String)
 
@@ -19,10 +20,15 @@ class TypeAlias_Inline_Class : StringSpec({
         alter shouldBe zahl
     }
 
-    "Imports mit Alias" {
-        val date = BetterDate.now()
+    "Import Alias fuer gleichnamige Klassen" {
+        val javaDate = Date()
+        val sqlDate = SqlDate(javaDate.time)
 
-        date::class shouldBe java.time.LocalDate::class
+        sqlDate.time shouldBe  javaDate.time
+    }
+
+    "Import Alias fuer 'schoenere' Namen" {
+        "ABC".inKleinbuchstaben() shouldBe "abc"
     }
 
     "Inline Klassen erzeugen neue Typen" {

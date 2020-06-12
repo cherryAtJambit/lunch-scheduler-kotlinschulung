@@ -12,7 +12,7 @@
     
 # Rest-API und Entitäten
 * extrahiert und vereinfacht aus dem C# Code
-* Authentification passiert über Http-BASIC. Name entspricht `User.name`. Passwort egal.
+* Authentification passiert über Http-Basic. Name entspricht `User.name`. Passwort egal.
 
 ## Entitäten
 * `User` hat nur einen Namen und keine Foto

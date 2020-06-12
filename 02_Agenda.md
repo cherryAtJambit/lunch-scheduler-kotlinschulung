@@ -81,8 +81,9 @@
 * [Webflux und Koroutinen](spring-reactive/src/main/kotlin/annotations/RestService.kt) 
 
 
-## Sonstiges und Ausblick    
-* [Type-Aliase / Inline Classes](misc/src/test/kotlin/TypeAlias_Inline_Class.kt)        
+## Sonstiges und Ausblick          
+* [Type-Aliase / Import Aliase / Inline Classes](misc/src/test/kotlin/TypeAlias_Inline_Class.kt)        
 * [Sealed Classes und ADT](misc/src/test/kotlin/SealedClassesADT.kt) 
-    * Beispiele: AuthenticationFailedCause, Websockets.Frame
+    * Weitere Beispiele: AuthenticationFailedCause, Websockets.Frame
+* [Flux-Beispiel - Type-Aliase, Sealed-Classes, Generics](misc/src/test/kotlin/FluxBeispiel.kt)           
 * Multiplatform Projekt
