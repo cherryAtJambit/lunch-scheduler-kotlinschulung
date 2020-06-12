@@ -48,7 +48,7 @@ Im Original gibt diese nur User zurück, mit denen man in der Vergangenheit zum 
 3. `InvitationController.post()` ändert die Einladung
 
 ### Lunches einsehen oder absagen
-1. `MeController.lunch()` holt eigenen und zugesagte Lunches
+1. `MeController.lunch()` holt eigene und zugesagte Lunches
 2. `Lunch.state` ändern und mit `LunchController.post()` abspeichern
 3. oder `Invitation.reponse` ändern und mit `InvitationController.post()` abspeichern
 

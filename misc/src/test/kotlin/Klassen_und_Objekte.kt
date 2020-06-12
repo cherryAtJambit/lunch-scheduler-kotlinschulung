@@ -41,8 +41,8 @@ class Klasssen_und_Objekte : StringSpec({
 
         class Rechteck {
 
-            var breite = 0
-            var hoehe = 0
+            internal var breite = 0
+            internal var hoehe = 0
 
             fun berechneFlaeche() = breite * hoehe
 
@@ -171,6 +171,24 @@ class Klasssen_und_Objekte : StringSpec({
         w.radiant shouldBe (PI / 4.0)
     }
 
+    "Codierte Setter mit Backing Field" {
+
+        class Person() {
+            var alter: Int = 0
+                set(value) {
+                    if (value < 0) {
+                        field = 0
+                    } else {
+                        field = value
+                    }
+                }
+        }
+
+        val p = Person()
+        p.alter = -42
+        p.alter shouldBe 0
+    }
+
     /**
      * Innere Klassen die implizit auf das äussere Objekt zugreifen sollen
      * müssen mit Inner definiert werden
@@ -297,20 +315,7 @@ class Klasssen_und_Objekte : StringSpec({
     }
 
 
-    /**
-     * ### Enums
-     *
-     * Anders als in Java heißt es hier `enum class` an Stelle von `enum`.
-     *
-     */
-    "Ein einfaches Enum" {
 
-        // Deklaration unten
-
-        Richtung.LINKS shouldNotBe Richtung.RECHTS
-        Richtung.values() shouldHaveSize 2
-
-    }
 
 })
 
@@ -333,4 +338,3 @@ class NummeriertesObjekt private constructor(val nr: Int) {
     }
 }
 
-enum class Richtung { LINKS, RECHTS }

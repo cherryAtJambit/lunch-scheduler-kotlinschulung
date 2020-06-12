@@ -1,4 +1,4 @@
-rootProject.name = "kotlin-jambit"
+rootProject.name = "kotlin-jambit-2"
 
 pluginManagement {
     plugins {
@@ -23,4 +23,5 @@ include(":r2dbc")
 include(":misc")
 include(":ktor")
 include(":lunch-scheduler")
+//include(":mpp-chat")
 
