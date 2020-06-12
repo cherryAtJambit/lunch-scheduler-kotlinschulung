@@ -6,9 +6,9 @@
 ## Aufgaben
 * Implementieren des `FriendsController` und teilweise des `MeController` (`get()` `friends(`)
 * Http-Basic-Authentication erzwingen 
-* Repositories, Entitäten und ggf. API-Request- und API-Reponse-Klassen anlegen
+* Repositories, Entitäten und ggf. API-Request- und API-Response-Klassen anlegen
 * Daten nur im Speicher halten und beim Starten mit ein paar Test-Usern füllen (Im C#-Projekt gibt es eine JSON-Datei)
-* API ausprobieren: Postman oder Test-Client oder Tests 
+* API ausprobieren: Postman, Test-Client oder Tests 
  
 # Übung 2: User und Friends persistieren 
 
@@ -57,7 +57,7 @@
 # Übung 5: DSL für Test-Szenarien definieren 
 
 ## Ziel 
-* Eigene DSL implementieren um Lunches für Tests anzulegen
+* Eigene DSL implementieren, um Lunches für Tests anzulegen
 
 ## DSL-Idee
 * Nur als Idee zu verstehen, kann auch ganz anders aussehen

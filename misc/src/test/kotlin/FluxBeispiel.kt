@@ -8,7 +8,7 @@ import io.kotest.matchers.shouldBe
 
 typealias Reducer<State, Effect> = (state: State, effect: Effect) -> State
 
-class Store<State, Effect>(initState: State, val reducer: Reducer<State, Effect>) {
+class Store<State, in Effect>(initState: State, val reducer: Reducer<State, Effect>) {
     private var stateHistory: MutableList<State> = mutableListOf(initState)
 
     val state: State get() = stateHistory.last()

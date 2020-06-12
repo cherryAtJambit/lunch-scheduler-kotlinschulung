@@ -8,7 +8,7 @@ import io.kotest.core.spec.style.StringSpec
  */
 class LambdasWithReceiver : StringSpec({
 
-    "Wiederholung einfache Lambdas" {
+    "Wiederholung: einfache Lambdas" {
 
         //Funktion mit Lambda als Parameter
         fun times(times: Int, action: (Int) -> Unit) {
