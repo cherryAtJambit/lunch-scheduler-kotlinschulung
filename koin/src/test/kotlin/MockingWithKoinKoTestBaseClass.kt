@@ -1,9 +1,9 @@
 package de.e2.koin
 
+import io.kotest.core.Tuple2
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.core.test.TestCase
 import io.kotest.core.test.TestResult
-import io.kotest.fp.Tuple2
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockkClass

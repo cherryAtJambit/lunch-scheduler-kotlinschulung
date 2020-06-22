@@ -9,6 +9,7 @@ val junitVersion: String by rootProject
 val ktorVersion: String by rootProject
 val jsonPathVersion: String by rootProject
 val jerseyClientVersion: String by rootProject
+val jaxbVersion: String by rootProject
 
 plugins {
     kotlin("jvm")
@@ -34,6 +35,7 @@ idea {
     }
 }
 
+
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("io.ktor:ktor-server-core:$ktorVersion")
@@ -54,5 +56,7 @@ dependencies {
     testImplementation("io.mockk:mockk:$mockkVersion")
 
     runtimeOnly("org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion")
+    runtimeOnly("javax.xml.bind:jaxb-api:$jaxbVersion")
+    runtimeOnly("org.glassfish.jaxb:jaxb-runtime:$jaxbVersion")
 }
 
