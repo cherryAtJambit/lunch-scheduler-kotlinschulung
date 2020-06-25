@@ -5,7 +5,6 @@ val ktorVersion: String by extra { "1.3.2" }
 val junitVersion: String by extra { "5.6.2" }
 val kotestVersion: String by extra { "4.1.0" }
 val log4jVersion: String by extra { "2.13.1" }
-val jsonpathVersion: String by extra { "2.4.0" }
 val mockkVersion: String by extra { "1.10.0" }
 val springMockkVersion: String by extra { "2.0.1" }
 val exposedVersion: String by extra { "0.26.1" }
