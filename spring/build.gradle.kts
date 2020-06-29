@@ -58,3 +58,6 @@ dependencies {
 
 }
 
+springBoot {
+    mainClassName ="de.e2.spring.annotations.AdresseAnnotationApplicationKt"
+}

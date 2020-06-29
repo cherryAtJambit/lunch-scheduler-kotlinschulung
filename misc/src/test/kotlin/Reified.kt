@@ -25,9 +25,6 @@ class Reified : StringSpec({
         assertTrue(intArray is Array<Int>)
     }
 
-    data class Person(val vorname: String, val nachname: String)
-
-
     "Beispiel mit Jackson" {
 
         val json = """
@@ -56,6 +53,9 @@ class Reified : StringSpec({
         doSomethingWithPerson(objectMapper.myReadValue(json))
     }
 })
+
+data class Person(val vorname: String, val nachname: String)
+
 
 
 

@@ -336,7 +336,7 @@ class BasicCoroutine : StringSpec({
         val collageJob = launch(Dispatchers.Unconfined) {
             createCollage(channel, 4)
         }
-        delay(Duration.ofMinutes(1))
+        delay(Duration.ofSeconds(10))
 
         dogsJob.cancel()
         catsJob.cancel()

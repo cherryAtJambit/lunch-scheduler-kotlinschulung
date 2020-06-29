@@ -90,7 +90,7 @@ class MoreCoroutine : StringSpec({
                 ImageIO.write(collage, "png", FileOutputStream("image-${imageId++}.png"))
             }
         }
-        delay(Duration.ofMinutes(2))
+        delay(Duration.ofSeconds(10))
 
         dogsChannel.cancel()
         catsChannel.cancel()
