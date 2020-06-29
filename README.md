@@ -1,6 +1,7 @@
 # Tag 2
 ## Projekt vorstellen, Klassen im Detail und Ktor Wiederholung
 * [Lunch Scheduler](lunch-scheduler/doc/01_Project.md)
+* [Thoughtworks Technology Radar](https://www.thoughtworks.com/radar/languages-and-frameworks)
 * [Klassen, Objekte, Vererbung im Detail](misc/src/test/kotlin/Klassen_und_Objekte.kt)
 * Rest mit Ktor (Wiederholung)
     * [Json mit Jackson](ktor/src/main/kotlin/rest/jackson/KtorRestJacksonServer.kt)
