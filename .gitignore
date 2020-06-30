@@ -5,3 +5,5 @@ out/
 *.iml
 /local
 /*.png
+/misc/address.txt
+/coroutines/*.png
