@@ -34,8 +34,6 @@ class ExposedDSLStart : StringSpec({
                 tables.next() shouldBe true
             }
         }
-
-
     }
 
     "insert row" {

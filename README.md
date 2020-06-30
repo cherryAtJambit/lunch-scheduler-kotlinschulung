@@ -12,7 +12,7 @@
 
 ## Lambdas With Receiver, Infix / Operatoren, Delegation und Exposed
 * [Lambda With Receiver](misc/src/test/kotlin/LambdasWithReceiver.kt)
-* [Infix Funktionen/ Operatoren](misc/src/test/kotlin/Infix_Operatoren.kt) 
+* [Infix Funktionen / Operatoren](misc/src/test/kotlin/Infix_Operatoren.kt) 
 * [Exposed DSL](https://github.com/JetBrains/Exposed)
     * [Einstieg](exposed/src/test/kotlin/dsl/ExposedDSLStart.kt)
     * [Detail](exposed/src/test/kotlin/dsl/ExposedDSLMore.kt)
@@ -66,8 +66,8 @@
 * [Cold Streams mit Flows](coroutines/src/test/kotlin/MoreCoroutine.kt)
 * [SSE Client mit Flow](ktor/src/main/kotlin/sse/KtorSseFlowClient.kt)
 * Websockets mit Ktor
-    * [Echo](coroutines/src/main/kotlin/websocket/EchoServer.kt)
-    * [Broadcast](coroutines/src/main/kotlin/websocket/EchoBroadcastServer.kt)
+    * [Echo](coroutines/src/main/kotlin/websocket/EchoServer.kt) ([Client](coroutines/src/main/kotlin/websocket/EchoClient.kt))
+    * [Broadcast](coroutines/src/main/kotlin/websocket/EchoBroadcastServer.kt) ([Client](coroutines/src/main/kotlin/websocket/EchoBroadcastClient.kt))
 * [Übung 8: Chat zwischen Lunch-Teilnehmer mittels Websockets](lunch-scheduler/doc/02_Uebungen.md)
 
                 
@@ -76,6 +76,7 @@
 * [Konstruktor Injection](spring/src/main/kotlin/annotations/RestService.kt) und [Field Injection via LateInit](spring/src/main/kotlin/annotations/InitConfiguration.kt)
 * [Spring Data](spring/src/main/kotlin/annotations/Persistence.kt)
 * [RestController](spring/src/main/kotlin/annotations/RestService.kt)
+* [Start Application](spring/src/main/kotlin/annotations/AdresseAnnotationApplication.kt)
 * [Functional Bean Registration](spring/src/main/kotlin/functional/AdresseFunctionalApplication.kt)
 * [Übung 8: User und Friends mit Spring](lunch-scheduler/doc/02_Uebungen.md)
 * [Reactive Datenbankzugriffe mit R2dbc](r2dbc/src/test/kotlin/BasicR2DBC.kt)

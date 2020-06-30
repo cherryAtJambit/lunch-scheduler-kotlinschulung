@@ -269,7 +269,7 @@ class Klasssen_und_Objekte : StringSpec({
      * * Keine Konstruktorparameter möglich, da das Objekt automatisch erzeugt wird (`init` ist möglich)
      * * Objekte können auch local angelegt werden: entspricht anonymer innerer Klasse
      */
-    "Singleton Objekte()" {
+    "Singleton Objekte" {
         // Deklaration des Objekts `MoinMoin` unterhalb dieser Funktion
 
         MoinMoin.sayHello()

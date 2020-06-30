@@ -85,6 +85,7 @@ class DependencyInjection : StringSpec({
         }
 
         app.koin.get<AdresseDao>().shouldNotBeNull()
+        app.koin.get<AdresseDaoImpl1>().shouldNotBeNull()
         app.koin.getAll<AdresseDao>().shouldHaveSize(2)
     }
 
@@ -137,10 +138,12 @@ class DependencyInjection : StringSpec({
         }
 
         val app = koinApplication {
-            modules(module {
-                single { PersonDao() }
-                single { PersonService(get()) }
-            })
+            modules(
+                module {
+                    single { PersonDao() }
+                    single { PersonService(get()) }
+                }
+            )
         }
 
         //muss man nur einmal machen, nicht pro Test

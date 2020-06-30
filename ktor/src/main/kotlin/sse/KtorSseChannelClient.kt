@@ -13,8 +13,11 @@ import javax.ws.rs.client.WebTarget
 import javax.ws.rs.sse.InboundSseEvent
 import javax.ws.rs.sse.SseEventSource
 
-class SseChannel private constructor(val url: String, private val channel: Channel<String>) :
-    ReceiveChannel<String> by channel {
+class SseChannel private constructor(
+    val url: String,
+    private val channel: Channel<String>
+) : ReceiveChannel<String> by channel {
+
     private var client: Client? = null
     private var sseEventSource: SseEventSource? = null
 

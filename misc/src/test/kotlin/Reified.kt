@@ -6,9 +6,6 @@ import io.kotest.core.spec.style.StringSpec
 import org.junit.jupiter.api.Assertions.assertTrue
 import java.util.*
 
-//Reified ermöglich den Zugriff auf die Klasses des generischen Parameters in der Funktion
-inline fun <reified T> ObjectMapper.myReadValue(json: String): T = readValue(json, T::class.java)
-
 
 /**
  * ##  Inline Reified erlaubt den Zugriff auf geenrische Parameter zur Laufzeit
@@ -55,6 +52,9 @@ class Reified : StringSpec({
 })
 
 data class Person(val vorname: String, val nachname: String)
+
+//Reified ermöglich den Zugriff auf die Klasses des generischen Parameters in der Funktion
+inline fun <reified T> ObjectMapper.myReadValue(json: String): T = readValue(json, T::class.java)
 
 
 

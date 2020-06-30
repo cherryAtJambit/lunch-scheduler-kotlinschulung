@@ -6,7 +6,7 @@
 ## Aufgaben
 * Implementieren des `FriendsController` und teilweise des `MeController` (`get()` `friends(`)
 * Http-Basic-Authentication erzwingen 
-* Repositories, Entitäten und ggf. API-Request- und API-Response-Klassen anlegen
+* Benötigte Repositories, Entitäten (`User`, `Friendship`) und ggf. API-Request- und API-Response-Klassen anlegen
 * Daten nur im Speicher halten und beim Starten mit ein paar Test-Usern füllen (Im C#-Projekt gibt es eine JSON-Datei)
 * API ausprobieren: Postman, Test-Client oder Tests 
  
@@ -16,7 +16,7 @@
 * User und Friends werden in H2-Datenbank persistiert
 
 ## Aufgaben
-* Exposed-DSL benutzen, um Tabellen zu beschreiben
+* Exposed-DSL benutzen, um Tabellen (`User`, `Friendship`) zu beschreiben
 * Implementieren der Repositories mit Exposed-DSL
 * Beim Starten der Anwendung ein paar Test-User anlegen
 * API ausprobieren: siehe oben
@@ -36,7 +36,7 @@
 # Übung 4: Dependency-Injection mit Koin 
 
 ## Ziel 
-* Benutzen von Koin für DB-Connections und Repositories und alle Controller implementiert
+* Benutzen von Koin für DB-Connections, Repositories und injizieren in Controller
 
 ## Aufgaben
 * Koin benutzen, um Abhängigkeiten zwischen Repositories und DB Connection und zwischen Controllern und Repository aufzulösen

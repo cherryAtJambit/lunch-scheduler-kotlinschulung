@@ -74,7 +74,7 @@ class Generics : StringSpec({
     }
 
     /**
-     * Wenn das Verhalten bei der Dekelration nicht eindutig ist, kann man es bei
+     * Wenn das Verhalten bei der Dekleration nicht eindeutig ist, kann man es bei
      * der Benutzung spezifizieren. Entpsricht dem Java-Verhalten
      */
     "Varianz bei der Benutzung - Use-Site-Variance" {
