@@ -1,6 +1,9 @@
 package de.e2.misc
 
+import io.kotest.assertions.assertSoftly
 import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.maps.shouldContainKey
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
@@ -148,6 +151,31 @@ class Standard_Lambda_Scope_Funktionen : StringSpec({
         }
     }
 
+    "isBlank, ifBlank, ifEmpty, isEmpty, orEmpty für Strings" {
+        "".assertSoftly {
+            it.isBlank().shouldBeTrue()
+            it.ifBlank { "was blank" } shouldBe "was blank"
+
+            it.isEmpty().shouldBeTrue()
+            it.ifEmpty { "was empty" } shouldBe "was empty"
+        }
+
+        " ".assertSoftly {
+            it.isBlank().shouldBeTrue()
+            it.ifBlank { "was blank" } shouldBe "was blank"
+
+            it.isEmpty().shouldBeFalse()
+            it.ifEmpty { "was empty" } shouldBe " "
+        }
+
+        (null as String?).assertSoftly {
+            it.isNullOrBlank().shouldBeTrue()
+            it.orEmpty().ifBlank { "was blank or null" } shouldBe "was blank or null"
+
+            it.isNullOrEmpty().shouldBeTrue()
+            it.orEmpty().ifEmpty { "was empty or null" } shouldBe "was empty or null"
+        }
+    }
 })
 
 
