@@ -1,8 +1,7 @@
 package de.e2.lunch_scheduler.com.jambit.controller
 
 import de.e2.lunch_scheduler.de.e2.lunch_scheduler.com.jambit.model.Friendship
-import de.e2.lunch_scheduler.de.e2.lunch_scheduler.com.jambit.model.RtFriendshipRepository
-import de.e2.lunch_scheduler.de.e2.lunch_scheduler.com.jambit.model.RtUserRepository
+import de.e2.lunch_scheduler.de.e2.lunch_scheduler.com.jambit.model.RtService
 import de.e2.lunch_scheduler.de.e2.lunch_scheduler.com.jambit.model.User
 import io.ktor.application.Application
 import io.ktor.application.call
@@ -24,14 +23,15 @@ fun Application.friendsController() {
 
             post("/api/friends") {
                 val newNewFriendshipRequest: NewFriendshipRequest = call.receive()
-                RtFriendshipRepository.save(newNewFriendshipRequest.newFriendship)
+                RtService.saveFriendship(newNewFriendshipRequest.newFriendship)
                 call.respond(NewFriendshipResponse("Friendship established. Congratulations."))
             }
 
             get("/api/friends/suggest") {
-                val userName = call.principal<UserIdPrincipal>()?.name ?: throw IllegalArgumentException("No username specified.")
-                val user: User = RtUserRepository.getByName(userName)
-                val suggestedFriends: List<User> = RtUserRepository.getAllNonFriendsById(user.id)
+                val userName = call.principal<UserIdPrincipal>()?.name ?: throw Exception("No username specified.")
+                val user: User = RtService.findFirstUserByName(userName)
+                        ?: throw Exception("No user found with name '$userName'.")
+                val suggestedFriends: List<User> = RtService.findEnemiesByUserId(user.id)
                 call.respond(SuggestedFriendsResponse(suggestedFriends))
             }
         }
