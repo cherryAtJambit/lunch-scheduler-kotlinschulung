@@ -54,6 +54,11 @@ fun init() {
 
         RtService.saveUser(User(null, user.Name))
     }
+
+//    val findFirstUserByName = RtService.findFirstUserByName("Eric Fiore")
+//    if(findFirstUserByName != null) {
+//        print(findFirstUserByName.name);
+//    }
 }
 
 data class UsersToImport(val Name: String, val PhotoUrl: String, val AuthorizationTokenExpiration: String, val AuthenticationProviderKind: Int, val AuthenticationProviderId: String)
