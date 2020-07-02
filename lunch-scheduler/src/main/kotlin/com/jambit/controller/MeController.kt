@@ -17,25 +17,36 @@ fun Application.meController() {
     routing {
         authenticate(AUTH_NAME) {
             get("/api/me") {
-                val userName = call.principal<UserIdPrincipal>()?.name ?: throw Exception("No username specified.")
-                val user = RtService.findFirstUserByName(userName)
-                        ?: throw Exception("No user found with name '$userName'.")
+                try {
+                    val userName = call.principal<UserIdPrincipal>()?.name ?: throw Exception("No username specified.")
+                    val user = RtService.findFirstUserByName(userName)
+                            ?: throw Exception("No user found with name '$userName'.")
 
-                call.respond(MeResponse(user))
+                    call.respond(MeResponse(user))
+                } catch (ex: Exception) {
+                    call.respond(ErrorResponse(ex.message ?: "An error occurred."))
+                }
             }
 
             get("/api/me/friends") {
-                val userName = call.principal<UserIdPrincipal>()?.name ?: throw Exception("No username specified.")
-                val user = RtService.findFirstUserByName(userName)
-                        ?: throw Exception("No user found with name '$userName'.")
+                try {
+                    val userName = call.principal<UserIdPrincipal>()?.name ?: throw Exception("No username specified.")
 
-                val friends: List<User> = RtService.findFriendsByUserId(user.id)
-                call.respond(FriendsResponse(friends))
+                    val user = RtService.findFirstUserByName(userName)
+                            ?: throw Exception("No user found with name '$userName'.")
+
+                    val friends: Set<User> = RtService.findAllFriendUsersByUserId(
+                            user.id ?: throw Exception("No user id found for user '$userName'")
+                    )
+                    call.respond(FriendsResponse(friends))
+                } catch (ex: Exception) {
+                    call.respond(ErrorResponse(ex.message ?: "An error occurred."))
+                }
             }
         }
     }
 }
 
-data class FriendsResponse(val friends: List<User>)
+data class FriendsResponse(val friends: Set<User>)
 
 data class MeResponse(val me: User)
