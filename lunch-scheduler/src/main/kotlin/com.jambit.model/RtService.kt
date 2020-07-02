@@ -9,15 +9,15 @@ object RtService {
 
     // creates or updates a user; returns old user if any
     fun saveUser(user: User): User? {
-        val id: String = user.id ?: UUID.randomUUID().toString();
-        val newUser: User = if (user.id == null) User(id, user.name) else user
+        val id = user.id ?: UUID.randomUUID().toString();
+        val newUser = if (user.id == null) user.copy(id = id) else user
         return users.put(id, newUser)
     }
 
     // creates or updates a friendship; returns old friendship if any
     fun saveFriendship(friendship: Friendship): Friendship? {
-        val id: String = friendship.id ?: UUID.randomUUID().toString();
-        val newUser: Friendship = if (friendship.id == null) Friendship(id, friendship.userId, friendship.friendUserId) else friendship
+        val id = friendship.id ?: UUID.randomUUID().toString();
+        val newUser = if (friendship.id == null) friendship.copy(id = id) else friendship
         return friendships.put(id, newUser)
     }
 
@@ -27,17 +27,17 @@ object RtService {
 
     fun getUserById(id: String): User? = users[id]
 
-    fun findFirstUserByName(name: String): User? = users.values.asSequence().firstOrNull { it.name == name }
+    fun findFirstUserByName(name: String): User? = users.values.firstOrNull { it.name == name }
 
     fun findEnemyUsersByUserId(userId: String): Set<User> {
-        val allUserIds: Set<String> = users.values.asSequence().mapNotNull { it.id }.toSet()
-        val friendIds: Set<String> = friendships.values.asSequence().filter { it.userId == userId }.map { it.friendUserId }.toSet()
-        val enemyIds: Set<String> = allUserIds - friendIds;
+        val allUserIds = users.values.asSequence().mapNotNull { it.id }.toSet()
+        val friendIds = friendships.values.asSequence().filter { it.userId == userId }.map { it.friendUserId }.toSet()
+        val enemyIds = allUserIds - friendIds;
         return enemyIds.asSequence().mapNotNull { users[it] }.toSet()
     }
 
     fun findAllFriendUsersByUserId(userId: String): Set<User> {
-        val friendIds: Set<String> = friendships.values.asSequence().filter { it.userId == userId }.map { it.friendUserId }.toSet()
+        val friendIds = friendships.values.asSequence().filter { it.userId == userId }.map { it.friendUserId }.toSet()
         return friendIds.asSequence().mapNotNull { users[it] }.toSet()
     }
 }

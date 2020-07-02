@@ -52,7 +52,7 @@ fun init() {
     val jsonTextList: List<UsersToImport> = mapper.readValue(jsonString)
     for (user in jsonTextList) {
 
-        RtService.saveUser(User(null, user.Name))
+        RtService.saveUser(User(user.Name))
     }
 
 //    val findFirstUserByName = RtService.findFirstUserByName("Eric Fiore")
