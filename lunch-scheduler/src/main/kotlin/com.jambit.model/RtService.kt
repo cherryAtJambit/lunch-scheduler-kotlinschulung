@@ -29,7 +29,7 @@ object RtService {
 
     fun findFirstUserByName(name: String): User? = users.values.asSequence().firstOrNull { it.name == name }
 
-    fun findEnemiesByUserId(userId: String): Set<User> {
+    fun findEnemyUsersByUserId(userId: String): Set<User> {
         val allUserIds: Set<String> = users.values.asSequence().mapNotNull { it.id }.toSet()
         val friendIds: Set<String> = friendships.values.asSequence().filter { it.userId == userId }.map { it.friendUserId }.toSet()
         val enemyIds: Set<String> = allUserIds - friendIds;
