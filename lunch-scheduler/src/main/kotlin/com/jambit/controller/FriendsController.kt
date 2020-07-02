@@ -22,24 +22,37 @@ fun Application.friendsController() {
         authenticate(AUTH_NAME) {
 
             post("/api/friends") {
-                val newNewFriendshipRequest: NewFriendshipRequest = call.receive()
-                RtService.saveFriendship(newNewFriendshipRequest.newFriendship)
-                call.respond(NewFriendshipResponse("Friendship established. Congratulations."))
+                try {
+                    val newNewFriendshipRequest: NewFriendshipRequest = call.receive()
+                    RtService.saveFriendship(newNewFriendshipRequest.newFriendship)
+                    call.respond(NewFriendshipResponse("Friendship established. Congratulations."))
+                } catch (ex: Exception) {
+                    call.respond(ErrorResponse(ex.message ?: "An error occurred."))
+                }
             }
 
             get("/api/friends/suggest") {
-                val userName = call.principal<UserIdPrincipal>()?.name ?: throw Exception("No username specified.")
-                val user: User = RtService.findFirstUserByName(userName)
-                        ?: throw Exception("No user found with name '$userName'.")
-                val suggestedFriends: List<User> = RtService.findEnemiesByUserId(user.id)
-                call.respond(SuggestedFriendsResponse(suggestedFriends))
+                try {
+
+                    val userName = call.principal<UserIdPrincipal>()?.name ?: throw Exception("No username specified.")
+                    val user: User = RtService.findFirstUserByName(userName)
+                            ?: throw Exception("No user found with name '$userName'.")
+                    val suggestedFriends: Set<User> = RtService.findEnemyUsersByUserId(
+                            user.id ?: throw Exception("No user id found for user '$userName'")
+                    )
+                    call.respond(SuggestedFriendsResponse(suggestedFriends))
+                } catch (ex: Exception) {
+                    call.respond(ErrorResponse(ex.message ?: "An error occurred."))
+                }
             }
         }
     }
 }
 
-data class SuggestedFriendsResponse(val suggestedFriends: List<User>)
+data class SuggestedFriendsResponse(val suggestedFriends: Set<User>)
 
 data class NewFriendshipRequest(val newFriendship: Friendship)
 
 data class NewFriendshipResponse(val result: String)
+
+data class ErrorResponse(val errorMessage: String)
