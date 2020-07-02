@@ -8,6 +8,7 @@ import io.ktor.application.call
 import io.ktor.auth.UserIdPrincipal
 import io.ktor.auth.authenticate
 import io.ktor.auth.principal
+import io.ktor.http.HttpStatusCode
 import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.routing.get
@@ -26,11 +27,11 @@ fun Application.friendsController() {
 
             post("/api/friends") {
                 try {
-                    val newNewFriendshipRequest: NewFriendshipRequest = call.receive()
-                    rtService.saveFriendship(newNewFriendshipRequest.newFriendship)
+                    val newFriendship: Friendship = call.receive()
+                    rtService.saveFriendship(newFriendship)
                     call.respond(NewFriendshipResponse("Friendship established. Congratulations."))
                 } catch (ex: Exception) {
-                    call.respond(ErrorResponse(ex.message ?: "An error occurred."))
+                    call.respond(HttpStatusCode.InternalServerError, ErrorResponse(ex.message ?: "An error occurred."))
                 }
             }
 
@@ -53,8 +54,6 @@ fun Application.friendsController() {
 }
 
 data class SuggestedFriendsResponse(val suggestedFriends: Set<User>)
-
-data class NewFriendshipRequest(val newFriendship: Friendship)
 
 data class NewFriendshipResponse(val result: String)
 
