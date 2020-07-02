@@ -17,22 +17,7 @@ import io.ktor.routing.routing
 const val AUTH_NAME = "basic" //TOPIC const
 
 fun Application.friendsController() {
-    install(ContentNegotiation) {
-        jackson()
-    }
 
-    install(Authentication) {
-        basic(name = AUTH_NAME) {
-            realm = "Ktor Server"
-            validate { credentials ->
-                if (credentials.name == credentials.password) {
-                    UserIdPrincipal(credentials.name)
-                } else {
-                    null
-                }
-            }
-        }
-    }
 
     routing {
         authenticate(AUTH_NAME) {
