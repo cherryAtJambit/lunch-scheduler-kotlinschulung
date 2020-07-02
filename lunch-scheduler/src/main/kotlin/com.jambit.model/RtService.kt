@@ -35,4 +35,9 @@ object RtService {
         val enemyIds: Set<String> = allUserIds - friendIds;
         return enemyIds.asSequence().mapNotNull { users[it] }.toSet()
     }
+
+    fun findAllFriendUsersByUserId(userId: String): Set<User> {
+        val friendIds: Set<String> = friendships.values.asSequence().filter { it.userId == userId }.map { it.friendUserId }.toSet()
+        return friendIds.asSequence().mapNotNull { users[it] }.toSet()
+    }
 }
