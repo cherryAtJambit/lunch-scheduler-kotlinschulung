@@ -37,6 +37,9 @@ idea {
 }
 
 dependencies {
+    implementation("io.ktor:ktor-client-jackson:$ktorVersion")
+    implementation("io.ktor:ktor-jackson:$ktorVersion")
+    implementation("io.ktor:ktor-auth:$ktorVersion")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.koin:koin-core-ext:$koinVersion")
     implementation("org.koin:koin-core:$koinVersion")
