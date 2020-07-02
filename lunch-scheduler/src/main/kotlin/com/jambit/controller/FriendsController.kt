@@ -5,7 +5,6 @@ import io.ktor.application.call
 import io.ktor.auth.authenticate
 import io.ktor.request.receive
 import io.ktor.response.respond
-import io.ktor.response.respondText
 import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.routing
@@ -17,19 +16,15 @@ fun Application.friendsController() {
     routing {
         authenticate(AUTH_NAME) {
 
-            get("/api/friends") {
-                call.respondText("Friend controller is running")
-            }
-
             post("/api/friends") {
                 val newNewFriendshipRequest: NewFriendshipRequest = call.receive()
                 friendsRepository.add(newNewFriendshipRequest.newFriendship)
                 call.respond(NewFriendshipResponse("Friendship established."))
             }
 
-            get("/api/suggest") {
+            get("/api/friends/suggest") {
                 val user: User = meRepository.getMe()
-                val suggestedFriends: List<User> = friendsRepository.getAllUnFriends(user.userId)
+                val suggestedFriends: List<User> = friendsRepository.getAllUnFriends(user)
                 call.respond(SuggestedFriendsResponse(suggestedFriends))
             }
         }
