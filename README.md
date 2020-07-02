@@ -5,7 +5,7 @@
 * [Klassen, Objekte, Vererbung im Detail](misc/src/test/kotlin/Klassen_und_Objekte.kt)
 * Rest mit Ktor (Wiederholung)
     * [Json mit Jackson](ktor/src/main/kotlin/rest/jackson/KtorRestJacksonServer.kt)
-    * [Json mit Kotlin Serialization](ktor/src/main/kotlin/rest/serialization/KtorRestSerializationClient.kt)         
+    * [Json mit Kotlin Serialization](ktor/src/main/kotlin/rest/serialization/KtorRestSerializationServer.kt)         
 * [Ktor Authentication](ktor/src/main/kotlin/auth/KtorAuthApplication.kt)
 * [Übung 1: User und Friends](lunch-scheduler/doc/02_Uebungen.md)
 
