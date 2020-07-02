@@ -4,7 +4,7 @@
 * Ktor-Anwendung ohne Datenbank, um User und Friends zu verwalten
 
 ## Aufgaben
-* Implementieren des `FriendsController` und teilweise des `MeController` (`get()` `friends(`)
+* Implementieren des `FriendsController` und teilweise den `MeController` (`get()` und `friends()`)
 * Http-Basic-Authentication erzwingen 
 * Benötigte Repositories, Entitäten (`User`, `Friendship`) und ggf. API-Request- und API-Response-Klassen anlegen
 * Daten nur im Speicher halten und beim Starten mit ein paar Test-Usern füllen (Im C#-Projekt gibt es eine JSON-Datei)
