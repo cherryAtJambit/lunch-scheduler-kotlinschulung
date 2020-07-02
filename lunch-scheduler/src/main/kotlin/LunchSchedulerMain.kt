@@ -16,6 +16,9 @@ import io.ktor.features.ContentNegotiation
 import io.ktor.jackson.jackson
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
+import org.jetbrains.exposed.dao.id.IntIdTable
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.dsl.module
 import org.koin.ktor.ext.inject
 import org.koin.ktor.ext.modules
@@ -61,14 +64,33 @@ fun init(rtService: RtService) {
         rtService.saveUser(User(user.Name))
     }
 
-//    val findFirstUserByName = RtService.findFirstUserByName("Eric Fiore")
-//    if(findFirstUserByName != null) {
-//        print(findFirstUserByName.name);
-//    }
+    val MEM_DB = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1"
+    Database.connect(MEM_DB, driver = "org.h2.Driver")
+
+    transaction {
+        addLogger(StdOutSqlLogger)
+        SchemaUtils.create(
+                UserTable,
+                FriendshipTable
+        )
+    }
+
 }
 
 data class UsersToImport(val Name: String, val PhotoUrl: String, val AuthorizationTokenExpiration: String, val AuthenticationProviderKind: Int, val AuthenticationProviderId: String)
 
 val friendshipModule = module {
     single { RtService() }
+}
+
+object UserTable : IntIdTable(name = "User") {
+    val name: Column<String> = varchar("name", 50)
+}
+
+object FriendshipTable : Table(name = "Friendship") {
+    val userId = reference("user_id", UserTable.id, onDelete = ReferenceOption.CASCADE)
+    val friendId = reference("friend_id", UserTable.id, onDelete = ReferenceOption.CASCADE)
+
+    override val primaryKey: PrimaryKey?
+        get() = PrimaryKey(userId, friendId)
 }
