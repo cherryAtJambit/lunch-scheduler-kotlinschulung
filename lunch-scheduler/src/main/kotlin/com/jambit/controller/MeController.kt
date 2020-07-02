@@ -7,6 +7,7 @@ import io.ktor.application.call
 import io.ktor.auth.UserIdPrincipal
 import io.ktor.auth.authenticate
 import io.ktor.auth.principal
+import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
 import io.ktor.routing.get
 import io.ktor.routing.routing
@@ -27,7 +28,7 @@ fun Application.meController() {
 
                     call.respond(MeResponse(user))
                 } catch (ex: Exception) {
-                    call.respond(ErrorResponse(ex.message ?: "An error occurred."))
+                    call.respond(HttpStatusCode.BadRequest, ErrorResponse(ex.message ?: "An error occurred."))
                 }
             }
 
@@ -43,7 +44,7 @@ fun Application.meController() {
                     )
                     call.respond(FriendsResponse(friends))
                 } catch (ex: Exception) {
-                    call.respond(ErrorResponse(ex.message ?: "An error occurred."))
+                    call.respond(HttpStatusCode.InternalServerError, ErrorResponse(ex.message ?: "An error occurred."))
                 }
             }
         }

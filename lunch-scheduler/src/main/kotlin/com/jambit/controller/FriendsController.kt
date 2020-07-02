@@ -46,7 +46,7 @@ fun Application.friendsController() {
                     )
                     call.respond(SuggestedFriendsResponse(suggestedFriends))
                 } catch (ex: Exception) {
-                    call.respond(ErrorResponse(ex.message ?: "An error occurred."))
+                    call.respond(HttpStatusCode.InternalServerError, ErrorResponse(ex.message ?: "An error occurred."))
                 }
             }
         }
