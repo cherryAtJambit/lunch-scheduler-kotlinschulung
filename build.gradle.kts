@@ -16,6 +16,7 @@ val r2dbcVersion: String by extra {"0.8.1.RELEASE"}
 val r2dbcPoolVersion: String by extra {"0.8.2.RELEASE"}
 val r2dbcH2Version: String by extra {"0.8.3.RELEASE"}
 val jaxbVersion: String by extra {"2.3.1"}
+val kotlinLoggingVersion: String by extra {"1.7.10"}
 
 allprojects {
     repositories {

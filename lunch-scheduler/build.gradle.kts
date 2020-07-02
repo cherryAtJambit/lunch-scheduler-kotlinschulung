@@ -9,6 +9,7 @@ val junitVersion: String by rootProject
 val ktorVersion: String by rootProject
 val exposedVersion: String by rootProject
 val h2Version: String by rootProject
+val kotlinLoggingVersion: String by rootProject
 
 
 plugins {
@@ -47,7 +48,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
     implementation("com.h2database:h2:$h2Version")
-
+    implementation("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
 
     testImplementation("org.koin:koin-test:$koinVersion")
     
