@@ -16,10 +16,15 @@ import io.ktor.features.ContentNegotiation
 import io.ktor.jackson.jackson
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
+import org.koin.dsl.module
+import org.koin.ktor.ext.inject
+import org.koin.ktor.ext.modules
 import java.io.File
 
 fun main() {
     val server = embeddedServer(factory = Netty, port = 8080) {
+
+        modules(friendshipModule)
 
         install(ContentNegotiation) {
             jackson()
@@ -37,14 +42,15 @@ fun main() {
                 }
             }
         }
-        init()
+        val rtService: RtService by inject()
+        init(rtService)
         friendsController()
         meController()
     }
     server.start(wait = true)
 }
 
-fun init() {
+fun init(rtService: RtService) {
     val mapper = jacksonObjectMapper()
     mapper.registerKotlinModule()
 
@@ -52,7 +58,7 @@ fun init() {
     val jsonTextList: List<UsersToImport> = mapper.readValue(jsonString)
     for (user in jsonTextList) {
 
-        RtService.saveUser(User(user.Name))
+        rtService.saveUser(User(user.Name))
     }
 
 //    val findFirstUserByName = RtService.findFirstUserByName("Eric Fiore")
@@ -62,3 +68,7 @@ fun init() {
 }
 
 data class UsersToImport(val Name: String, val PhotoUrl: String, val AuthorizationTokenExpiration: String, val AuthenticationProviderKind: Int, val AuthenticationProviderId: String)
+
+val friendshipModule = module {
+    single { RtService() }
+}

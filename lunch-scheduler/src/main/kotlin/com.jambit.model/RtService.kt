@@ -2,7 +2,7 @@ package de.e2.lunch_scheduler.de.e2.lunch_scheduler.com.jambit.model
 
 import java.util.*
 
-object RtService {
+class RtService {
 
     private val users = mutableMapOf<String, User>()
     private val friendships = mutableMapOf<String, Friendship>()

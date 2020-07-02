@@ -10,16 +10,19 @@ import io.ktor.auth.principal
 import io.ktor.response.respond
 import io.ktor.routing.get
 import io.ktor.routing.routing
+import org.koin.ktor.ext.inject
 
 
 fun Application.meController() {
+
+    val rtService: RtService by inject()
 
     routing {
         authenticate(AUTH_NAME) {
             get("/api/me") {
                 try {
                     val userName = call.principal<UserIdPrincipal>()?.name ?: throw Exception("No username specified.")
-                    val user = RtService.findFirstUserByName(userName)
+                    val user = rtService.findFirstUserByName(userName)
                             ?: throw Exception("No user found with name '$userName'.")
 
                     call.respond(MeResponse(user))
@@ -32,10 +35,10 @@ fun Application.meController() {
                 try {
                     val userName = call.principal<UserIdPrincipal>()?.name ?: throw Exception("No username specified.")
 
-                    val user = RtService.findFirstUserByName(userName)
+                    val user = rtService.findFirstUserByName(userName)
                             ?: throw Exception("No user found with name '$userName'.")
 
-                    val friends: Set<User> = RtService.findAllFriendUsersByUserId(
+                    val friends: Set<User> = rtService.findAllFriendUsersByUserId(
                             user.id ?: throw Exception("No user id found for user '$userName'")
                     )
                     call.respond(FriendsResponse(friends))

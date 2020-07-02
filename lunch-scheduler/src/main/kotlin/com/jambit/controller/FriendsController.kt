@@ -13,10 +13,13 @@ import io.ktor.response.respond
 import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.routing
+import org.koin.ktor.ext.inject
 
 const val AUTH_NAME = "basic" //TOPIC const
 
 fun Application.friendsController() {
+
+    val rtService: RtService by inject()
 
     routing {
         authenticate(AUTH_NAME) {
@@ -24,7 +27,7 @@ fun Application.friendsController() {
             post("/api/friends") {
                 try {
                     val newNewFriendshipRequest: NewFriendshipRequest = call.receive()
-                    RtService.saveFriendship(newNewFriendshipRequest.newFriendship)
+                    rtService.saveFriendship(newNewFriendshipRequest.newFriendship)
                     call.respond(NewFriendshipResponse("Friendship established. Congratulations."))
                 } catch (ex: Exception) {
                     call.respond(ErrorResponse(ex.message ?: "An error occurred."))
@@ -35,9 +38,9 @@ fun Application.friendsController() {
                 try {
 
                     val userName = call.principal<UserIdPrincipal>()?.name ?: throw Exception("No username specified.")
-                    val user: User = RtService.findFirstUserByName(userName)
+                    val user: User = rtService.findFirstUserByName(userName)
                             ?: throw Exception("No user found with name '$userName'.")
-                    val suggestedFriends: Set<User> = RtService.findEnemyUsersByUserId(
+                    val suggestedFriends: Set<User> = rtService.findEnemyUsersByUserId(
                             user.id ?: throw Exception("No user id found for user '$userName'")
                     )
                     call.respond(SuggestedFriendsResponse(suggestedFriends))
