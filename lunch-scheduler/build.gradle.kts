@@ -7,6 +7,9 @@ val koinVersion: String by rootProject
 val mockkVersion: String by rootProject
 val junitVersion: String by rootProject
 val ktorVersion: String by rootProject
+val exposedVersion: String by rootProject
+val h2Version: String by rootProject
+
 
 plugins {
     kotlin("jvm")
@@ -39,6 +42,12 @@ dependencies {
     implementation("org.koin:koin-ktor:$koinVersion")
     implementation("io.ktor:ktor-server-core:$ktorVersion")
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
+    implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
+    implementation("com.h2database:h2:$h2Version")
+
 
     testImplementation("org.koin:koin-test:$koinVersion")
     
