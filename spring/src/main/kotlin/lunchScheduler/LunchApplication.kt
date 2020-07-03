@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 data class User(val name: String, val id: String? = null)
+data class Friendship(val userId: String, val friendUserId: String, val id: String? = null)
 
 @SpringBootApplication
 class LunchApplication
