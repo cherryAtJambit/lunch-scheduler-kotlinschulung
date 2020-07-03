@@ -4,7 +4,7 @@ import de.e2.spring.lunchScheduler.Friendship
 import de.e2.spring.lunchScheduler.User
 import java.util.*
 
-class RtService() {
+class RtService {
 
     private val users = mutableMapOf<String, User>()
     private val friendships = mutableMapOf<String, Friendship>()
