@@ -16,6 +16,7 @@ import io.ktor.features.ContentNegotiation
 import io.ktor.jackson.jackson
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
+import kotlinx.coroutines.channels.BroadcastChannel
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -57,6 +58,7 @@ fun init(rtService: RtService) {
     val mapper = jacksonObjectMapper()
     mapper.registerKotlinModule()
 
+
     val jsonString: String = File("./lunch-scheduler/src/main/kotlin/com.jambit.model/Users.json").readText(Charsets.UTF_8)
     val jsonTextList: List<UsersToImport> = mapper.readValue(jsonString)
     for (user in jsonTextList) {
@@ -80,7 +82,8 @@ fun init(rtService: RtService) {
 data class UsersToImport(val Name: String, val PhotoUrl: String, val AuthorizationTokenExpiration: String, val AuthenticationProviderKind: Int, val AuthenticationProviderId: String)
 
 val friendshipModule = module {
-    single { RtService() }
+    single { BroadcastChannel<String>(1) }
+    single { RtService(get()) } //injects automatically broadcastChannel by convention
 }
 
 object UserTable : IntIdTable(name = "User") {
