@@ -7,9 +7,14 @@ import io.ktor.application.call
 import io.ktor.auth.UserIdPrincipal
 import io.ktor.auth.authenticate
 import io.ktor.auth.principal
+import io.ktor.http.CacheControl
+import io.ktor.http.ContentType
+import io.ktor.response.cacheControl
 import io.ktor.response.respond
+import io.ktor.response.respondTextWriter
 import io.ktor.routing.get
 import io.ktor.routing.routing
+import kotlinx.coroutines.launch
 import org.koin.ktor.ext.inject
 
 
@@ -59,6 +64,19 @@ fun Application.meController() {
                     call.respond(FriendsResponse(friends))
                 } catch (ex: Exception) {
                     call.respond(ErrorResponse(ex.message ?: "An error occurred."))
+                }
+            }
+
+            get("api/me/events") {
+                val channel = rtService.broadcastChannel.openSubscription()
+                call.response.cacheControl(CacheControl.NoCache(null))
+                call.respondTextWriter(contentType = ContentType.Text.EventStream) {
+                    launch {
+                        for(msg in channel) {
+                                write("Received event: $msg\n")
+                                flush()
+                        }
+                    }
                 }
             }
         }
