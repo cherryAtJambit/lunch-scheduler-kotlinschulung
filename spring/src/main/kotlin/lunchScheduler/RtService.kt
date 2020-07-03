@@ -1,9 +1,11 @@
-package de.e2.lunch_scheduler.de.e2.lunch_scheduler.com.jambit.model
+package de.e2.spring.lunchScheduler
 
 import de.e2.spring.lunchScheduler.Friendship
 import de.e2.spring.lunchScheduler.LunchUser
+import org.springframework.stereotype.Component
 import java.util.*
 
+@Component
 class RtService {
 
     private val users = mutableMapOf<String, LunchUser>()

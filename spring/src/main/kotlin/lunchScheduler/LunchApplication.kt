@@ -1,7 +1,5 @@
 package de.e2.spring.lunchScheduler
 
-
-import de.e2.lunch_scheduler.de.e2.lunch_scheduler.com.jambit.model.RtService
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.support.beans
