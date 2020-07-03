@@ -17,6 +17,8 @@ import io.ktor.jackson.jackson
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -47,14 +49,14 @@ fun main() {
             }
         }
         val rtService: RtService by inject()
-        init(rtService)
+        launch { init(rtService) }
         friendsController()
         meController()
     }
     server.start(wait = true)
 }
 
-fun init(rtService: RtService) {
+suspend fun init(rtService: RtService) {
     val mapper = jacksonObjectMapper()
     mapper.registerKotlinModule()
 

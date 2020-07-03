@@ -14,7 +14,6 @@ import io.ktor.response.respond
 import io.ktor.response.respondTextWriter
 import io.ktor.routing.get
 import io.ktor.routing.routing
-import kotlinx.coroutines.launch
 import org.koin.ktor.ext.inject
 
 
@@ -26,7 +25,8 @@ fun Application.meController() {
         authenticate(AUTH_NAME) {
             get("/api/me") {
                 try {
-                    val userName = call.principal<UserIdPrincipal>()?.name ?: throw Exception("No username specified.")
+                    val userName = call.principal<UserIdPrincipal>()?.name
+                            ?: throw Exception("No username specified.")
                     val user = rtService.findFirstUserByName(userName)
                             ?: throw Exception("No user found with name '$userName'.")
 
@@ -38,7 +38,8 @@ fun Application.meController() {
 
             get("/api/me/friends") {
                 try {
-                    val userName = call.principal<UserIdPrincipal>()?.name ?: throw Exception("No username specified.")
+                    val userName = call.principal<UserIdPrincipal>()?.name
+                            ?: throw Exception("No username specified.")
 
                     val user = rtService.findFirstUserByName(userName)
                             ?: throw Exception("No user found with name '$userName'.")
@@ -51,31 +52,16 @@ fun Application.meController() {
                     call.respond(ErrorResponse(ex.message ?: "An error occurred."))
                 }
             }
-            get("/api/me/events") {
-                try {
-                    val userName = call.principal<UserIdPrincipal>()?.name ?: throw Exception("No username specified.")
-
-                    val user = rtService.findFirstUserByName(userName)
-                            ?: throw Exception("No user found with name '$userName'.")
-
-                    val friends: Set<User> = rtService.findAllFriendUsersByUserId(
-                            user.id ?: throw Exception("No user id found for user '$userName'")
-                    )
-                    call.respond(FriendsResponse(friends))
-                } catch (ex: Exception) {
-                    call.respond(ErrorResponse(ex.message ?: "An error occurred."))
-                }
-            }
-
             get("api/me/events") {
+
                 val channel = rtService.broadcastChannel.openSubscription()
                 call.response.cacheControl(CacheControl.NoCache(null))
                 call.respondTextWriter(contentType = ContentType.Text.EventStream) {
-                    launch {
-                        for(msg in channel) {
-                                write("Received event: $msg\n")
-                                flush()
-                        }
+                    write("data: connected:\n")
+                    flush()
+                    for (msg in channel) {
+                        write("data: Received event: $msg\n")
+                        flush()
                     }
                 }
             }
