@@ -17,6 +17,7 @@ import org.springframework.web.servlet.function.ServerResponse
 import org.springframework.web.servlet.function.router
 
 data class LunchUser(val name: String, val id: String? = null)
+data class Friendship(val userId: String, val friendUserId: String, val id: String? = null)
 
 @SpringBootApplication
 class LunchApplication
